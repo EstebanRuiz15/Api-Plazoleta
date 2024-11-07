@@ -4,4 +4,5 @@ import com.restaurant.plazoleta.domain.model.Dish;
 
 public interface IDishService {
     void createDish(Dish dish);
+    void modifyDish(Dish dish, Integer id);
 }

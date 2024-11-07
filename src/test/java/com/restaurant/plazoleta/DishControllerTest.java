@@ -1,9 +1,10 @@
 package com.restaurant.plazoleta;
 
+import com.restaurant.plazoleta.domain.exception.ExceptionDishNotFound;
 import com.restaurant.plazoleta.domain.model.Dish;
-import com.restaurant.plazoleta.infraestructur.driven_rp.entity.DishEntity;
 import com.restaurant.plazoleta.infraestructur.driving_http.controllers.DishController;
 import com.restaurant.plazoleta.domain.interfaces.IDishService;
+import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.DishModifyDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.DishRequestDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IDishRequestMapper;
 import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
@@ -17,10 +18,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class DishControllerTest {
+ class DishControllerTest {
 
     @Mock
     private IDishService service;
@@ -40,7 +42,7 @@ public class DishControllerTest {
     }
 
     @Test
-    public void testCreateNewDish_Success() throws Exception {
+    void testCreateNewDish_Success() throws Exception {
         // Arrange
         DishRequestDto requestDto = new DishRequestDto();
         requestDto.setName("Dish Name");
@@ -64,9 +66,21 @@ public class DishControllerTest {
         verify(service, times(1)).createDish(any());
     }
 
+    @Test
+    void modifyDish_ShouldReturnOk_WhenDishIsModifiedSuccessfully() throws Exception {
+        DishModifyDto modifyDto = new DishModifyDto();
+        modifyDto.setName("Updated Dish");
+        modifyDto.setDescription("Updated Description");
+        modifyDto.setPrice(150.0);
 
+        doNothing().when(service).modifyDish(any(), anyInt());
 
+        mockMvc.perform(patch("/Dish/update/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"name\": \"Updated Dish\", \"description\": \"Updated Description\", \"price\": 150.0 }"))
+                .andExpect(status().isOk());
 
-
+        verify(service, times(1)).modifyDish(any(), eq(1));
+    }
 
 }

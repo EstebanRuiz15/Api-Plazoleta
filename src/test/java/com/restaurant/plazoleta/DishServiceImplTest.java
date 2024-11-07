@@ -2,7 +2,9 @@ package com.restaurant.plazoleta;
 
 import static org.mockito.Mockito.*;
 
+import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
 import com.restaurant.plazoleta.domain.exception.ExceptionCategoryNotFound;
+import com.restaurant.plazoleta.domain.exception.ExceptionDishNotFound;
 import com.restaurant.plazoleta.domain.exception.ExceptionRestaurantNotFound;
 import com.restaurant.plazoleta.domain.interfaces.IDishPersistance;
 import com.restaurant.plazoleta.domain.interfaces.ICategoriaPersistance;
@@ -11,6 +13,7 @@ import com.restaurant.plazoleta.domain.model.Category;
 import com.restaurant.plazoleta.domain.model.Dish;
 import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.domain.services.DishServiceImpl;
+import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -26,11 +29,17 @@ class DishServiceImplTest {
     @Mock
     private IRestaurantPersistance restaurantService;
     private DishServiceImpl dishService;
-
+    private Dish dishh;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         dishService = new DishServiceImpl(persistanceDish, categoriaServices, restaurantService);
+        dishh = new Dish();
+        dishh.setName("Test Dish");
+        dishh.setDescription("Test Description");
+        dishh.setPrice(100.0);
+        dishh.setCategory(1);
+        dishh.setRestaurant(1);
     }
 
     @Test
@@ -104,5 +113,50 @@ class DishServiceImplTest {
         when(restaurantService.findById(1)).thenReturn(null);
         ExceptionRestaurantNotFound exception = assertThrows(ExceptionRestaurantNotFound.class, () -> dishService.createDish(dish));
         assertEquals("Restaurant not found1", exception.getMessage());
+    }
+    @Test
+    void modifyDish_ShouldThrowException_WhenIdIsNull() {
+        Exception exception = assertThrows(ExceptionDishNotFound.class, () -> {
+            dishService.modifyDish(dishh, null);
+        });
+
+        assertEquals(ConstantsDomain.Dish_NOT_FOUND + null, exception.getMessage());
+    }
+
+    @Test
+    void modifyDish_ShouldThrowException_WhenIdDoesNotExist() {
+        when(persistanceDish.existFindById(1)).thenReturn(false);
+
+        Exception exception = assertThrows(ExceptionDishNotFound.class, () -> {
+            dishService.modifyDish(dishh, 1);
+        });
+
+        assertEquals(ConstantsDomain.Dish_NOT_FOUND + 1, exception.getMessage());
+        verify(persistanceDish, never()).updateDish(any(Dish.class), anyInt());
+    }
+
+    @Test
+    void modifyDish_ShouldThrowException_WhenAllFieldsAreNullOrEmpty() {
+        when(persistanceDish.existFindById(1)).thenReturn(true);
+
+        dishh.setName(null);
+        dishh.setDescription(null);
+        dishh.setPrice(null);
+
+        Exception exception = assertThrows(ErrorExceptionParam.class, () -> {
+            dishService.modifyDish(dishh, 1);
+        });
+
+        assertEquals(ConstantsDomain.NOT_ALL_FIELD_EMPTY, exception.getMessage());
+        verify(persistanceDish, never()).updateDish(any(Dish.class), anyInt());
+    }
+
+    @Test
+    void modifyDish_ShouldUpdateDishSuccessfully() {
+        when(persistanceDish.existFindById(1)).thenReturn(true);
+
+        dishService.modifyDish(dishh, 1);
+
+        verify(persistanceDish, times(1)).updateDish(dishh, 1);
     }
 }

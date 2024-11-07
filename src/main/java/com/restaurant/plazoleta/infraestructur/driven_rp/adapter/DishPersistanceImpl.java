@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +34,27 @@ public class DishPersistanceImpl implements IDishPersistance {
         dishh.setCategory(cat);
         dishh.setRestaurant(rest);
         repositoryJpa.save(dishh);
+    }
+
+    @Override
+    public boolean existFindById(Integer id) {
+        Optional<DishEntity> exist = repositoryJpa.findById(id);
+        if(exist.isEmpty()) return false;
+        return true;
+    }
+
+    @Override
+    public void updateDish(Dish request, Integer id) {
+        DishEntity dish= repositoryJpa.findById(id).get();
+        if(!request.getName().isEmpty()){
+            dish.setName(request.getName());
+        }
+        if(!request.getDescription().isEmpty()){
+            dish.setDescription(request.getDescription());
+        }
+        if(request.getPrice() != null){
+            dish.setPrice(request.getPrice());
+        }
+        repositoryJpa.save(dish);
     }
 }

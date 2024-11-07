@@ -28,5 +28,7 @@ public final class InfraConstants {
     public static final String RESTAURANT_POSITIVE_INTEGER = "Restaurant ID must be a positive integer";
     public static final String CATEGORY_POSITIVE_INTEGER = "Category ID must be a positive integer";
     public static final String DISH_SUCCES="Create new dish successfull";
+    public static final String DIS_UPDATE_SUCCES="Modify dish successfull";
+
 
 }
