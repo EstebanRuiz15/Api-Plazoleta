@@ -116,4 +116,16 @@ public class ControlAdvice {
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(ExceptionDishNotFound.class)
+    public ResponseEntity<?> resourceNotFoundException(ExceptionDishNotFound ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put("error", ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Error in fields",
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
 }
