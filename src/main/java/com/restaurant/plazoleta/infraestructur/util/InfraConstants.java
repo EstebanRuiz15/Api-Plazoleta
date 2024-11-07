@@ -21,5 +21,12 @@ public final class InfraConstants {
     public static final int FIVETEEN=15;
     public static final String CREATE_RESTAURANT_SUCCES="create new restaurant successfull";
     public static final String DETAIL="Restaurant creation details";
+    public static final String NAME_NOT_EMPTY = "Name must not be empty or null";
+    public static final String PRICE_POSITIVE_INTEGER = "Price must be a positive integer";
+    public static final String DESCRIPTION_NOT_EMPTY = "Description must not be empty or null";
+    public static final String IMAGE_URL_VALID = "Image URL must be a valid URL";
+    public static final String RESTAURANT_POSITIVE_INTEGER = "Restaurant ID must be a positive integer";
+    public static final String CATEGORY_POSITIVE_INTEGER = "Category ID must be a positive integer";
+    public static final String DISH_SUCCES="Create new dish successfull";
 
 }
