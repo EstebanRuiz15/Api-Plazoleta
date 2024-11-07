@@ -9,6 +9,8 @@ import com.restaurant.plazoleta.infraestructur.driven_rp.persistence.RestaurantJ
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class RestaurantPersistanceImpl implements IRestaurantPersistance {
@@ -20,5 +22,12 @@ public class RestaurantPersistanceImpl implements IRestaurantPersistance {
         RestaurantEntity entity= mapperEntity.toEntity(restaurant);
         entity.setOwner(restaurant.getOwner());
         repositoryJpa.save(entity);
+    }
+
+    @Override
+    public Restaurant findById(Integer id) {
+        Optional<RestaurantEntity> restaurant=repositoryJpa.findById(id);
+        return restaurant.map(mapperEntity :: toRestaurant)
+                .orElse(null);
     }
 }

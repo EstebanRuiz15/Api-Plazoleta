@@ -35,4 +35,6 @@ public class RestaurantEntity {
     @Column(name="id_owner", nullable = false)
     private int owner;
 
+    public RestaurantEntity() {
+    }
 }

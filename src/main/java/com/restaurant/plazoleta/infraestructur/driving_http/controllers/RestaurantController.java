@@ -34,14 +34,12 @@ public class RestaurantController {
                             responseCode = "201",
                             description = "Restaurant created successfully",
                             content = @Content(
-                                    mediaType = "application/json"
                             )
                     ),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request due to validation errors",
                             content = @Content(
-                                    mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class)
                             )
                     ),
@@ -49,7 +47,6 @@ public class RestaurantController {
                             responseCode = "400",
                             description = "Bad Request due to invalid user data (owner validation failed)",
                             content = @Content(
-                                    mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class)
                             )
                     ),
@@ -57,7 +54,6 @@ public class RestaurantController {
                             responseCode = "500",
                             description = "Internal Server Error due to unexpected server issues",
                             content = @Content(
-                                    mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class)
                             )
                     )
