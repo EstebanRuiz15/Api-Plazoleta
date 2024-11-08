@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring")
 public interface IMapperRestaurantToEntity {
+
     @Mapping(target = "owner", ignore = true)
     RestaurantEntity toEntity (Restaurant restaurant);
     Restaurant toRestaurant (RestaurantEntity restaurant);

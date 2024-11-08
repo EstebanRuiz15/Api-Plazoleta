@@ -32,6 +32,7 @@ public final class InfraConstants {
     public static final String DISH_DISABLE_SUCCES="Disbled dish successfull";
     public static final String DISH_ENABLE_SUCCES="Enable dish successfull";
     public static final String ERROR="error";
+    public static final Integer UNAUTHORIZED_CODE=401;
 
 
 }

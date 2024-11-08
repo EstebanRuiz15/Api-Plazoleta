@@ -4,6 +4,7 @@ import com.restaurant.plazoleta.domain.exception.ErrorFeignException;
 import com.restaurant.plazoleta.domain.interfaces.IValidateAutorizeFeign;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import com.restaurant.plazoleta.infraestructur.feign.ValidateUserAuthorize;
+import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
         try {
             return feignClient.validateAdmin();
         } catch (FeignException e) {
-            if (e.status() == 401) {
+            if (e.status() == InfraConstants.UNAUTHORIZED_CODE) {
                 return false;
             }
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
@@ -30,7 +31,7 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
         try {
             return feignClient.validateOWNER();
         } catch (FeignException e) {
-            if (e.status() == 401) {
+            if (e.status() == InfraConstants.UNAUTHORIZED_CODE) {
                 return false;
             }
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
@@ -42,7 +43,7 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
         try {
             return feignClient.validateCient();
         } catch (FeignException e) {
-            if (e.status() == 401) {
+            if (e.status() == InfraConstants.UNAUTHORIZED_CODE) {
                 return false;
             }
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
@@ -54,7 +55,7 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
         try {
             return feignClient.validateEmployee();
         } catch (FeignException e) {
-            if (e.status() == 401) {
+            if (e.status() == InfraConstants.UNAUTHORIZED_CODE) {
                 return false;
             }
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
@@ -66,7 +67,7 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
         try {
             return feignClient.validateToken();
         } catch (FeignException e) {
-            if (e.status() == 401) {
+            if (e.status() == InfraConstants.UNAUTHORIZED_CODE) {
                 return false;
             }
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
@@ -75,6 +76,10 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
 
     @Override
     public Integer getUserId() {
+        try {
        return feignClient.getUserId();
+        } catch (FeignException e) {
+            throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
+        }
     }
 }
