@@ -128,4 +128,29 @@ public class ControlAdvice {
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ExceptionNoOwnerOfThisRestaurant.class)
+    public ResponseEntity<?> ExceptionNoOwnerRestaurant(ExceptionNoOwnerOfThisRestaurant ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put("error", ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ExceptionEnableAndDisableDish.class)
+    public ResponseEntity<?> ExceptionEnableAndDisable(ExceptionEnableAndDisableDish ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put("error", ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 }

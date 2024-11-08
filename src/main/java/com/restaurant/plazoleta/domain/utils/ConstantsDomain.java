@@ -17,5 +17,8 @@ public final class ConstantsDomain {
     public static final String NAME_AL_READY_EXIST="The name is already exist";
     public static final String CREAT_SUCCESSFULL="Create new successfully";
     public static final String NOT_ALL_FIELD_EMPTY="The 3 fields cannot be empty, at least one must contain to modify";
+    public static final String NO_OWNER_THIS_REST="You no Owner of this restaurant";
+    public static final String ALREADY_DISABLE="the dish is already disabled";
+    public static final String ALREADY_ENABLE="the dish is already enable";
 }
 

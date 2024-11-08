@@ -6,4 +6,5 @@ public interface IValidateAutorizeFeign {
     Boolean validateCient();
     Boolean validateEmployee();
     Boolean validateToken();
+    Integer getUserId();
 }

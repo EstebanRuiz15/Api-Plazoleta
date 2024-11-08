@@ -105,4 +105,98 @@ public class DishController {
         service.modifyDish(mapperRequest.toDishModify(request), id);
         return ResponseEntity.ok(InfraConstants.DIS_UPDATE_SUCCES);
     }
+
+    @Operation(
+            summary = "Disable a Dish",
+            description = "This endpoint allows you to disable a dish in the restaurant system. The user must be the owner of the restaurant to perform this action.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Dish successfully disabled",
+                            content = @Content(
+                                    schema = @Schema(type = "string", example = InfraConstants.DISH_DISABLE_SUCCES)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error in the provided data",
+                            content = @Content(
+                                    schema = @Schema( example = "{\"errors\": [\"Dish ID must be provided.\"]}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Dish ",
+                            content = @Content(
+                                    schema = @Schema( example = "{\"error\": \"Dish not found\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "User is not the owner of the restaurant",
+                            content = @Content(
+                                    schema = @Schema( example = "{\"error\": \"User is not the owner of this restaurant\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(example = "{\"error\": \"Unexpected error occurred while disabling the dish.\"}")
+                            )
+                    )
+            }
+    )
+    @PatchMapping("/disable{id}")
+    public ResponseEntity<String> disableDish(@RequestParam Integer id){
+        service.disableDish(id);
+        return ResponseEntity.ok(InfraConstants.DISH_DISABLE_SUCCES);
+    }
+
+    @Operation(
+            summary = "Enable a Dish",
+            description = "This endpoint allows you to enable a dish in the restaurant system. The user must be the owner of the restaurant to perform this action.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Dish successfully enabled",
+                            content = @Content(
+                                    schema = @Schema(type = "string", example = InfraConstants.DISH_ENABLE_SUCCES)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error in the provided data",
+                            content = @Content(
+                                    schema = @Schema( example = "{\"errors\": [\"Dish ID must be provided.\"]}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Dish or Restaurant not found",
+                            content = @Content(
+                                    schema = @Schema( example = "{\"error\": \"Dish not found\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "User is not the owner of the restaurant",
+                            content = @Content(
+                                    schema = @Schema( example = "{\"error\": \"User is not the owner of this restaurant\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(example = "{\"error\": \"Unexpected error occurred while enabling the dish.\"}")
+                            )
+                    )
+            }
+    )
+    @PatchMapping("/enable{id}")
+    public ResponseEntity<String> enableDish(@RequestParam Integer id){
+        service.enableDish(id);
+        return ResponseEntity.ok(InfraConstants.DISH_ENABLE_SUCCES);
+    }
 }

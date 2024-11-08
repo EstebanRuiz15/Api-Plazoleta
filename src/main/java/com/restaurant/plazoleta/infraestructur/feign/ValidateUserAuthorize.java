@@ -21,4 +21,7 @@ public interface ValidateUserAuthorize {
 
     @GetMapping("auth/validate/token")
     Boolean validateToken();
+
+    @GetMapping("auth/userId")
+    Integer getUserId();
 }

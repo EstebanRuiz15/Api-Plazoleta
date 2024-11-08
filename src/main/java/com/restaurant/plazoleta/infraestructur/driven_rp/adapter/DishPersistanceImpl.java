@@ -57,4 +57,18 @@ public class DishPersistanceImpl implements IDishPersistance {
         }
         repositoryJpa.save(dish);
     }
+
+    @Override
+    public Dish findById(Integer id) {
+        Optional<DishEntity> dish=repositoryJpa.findById(id);
+        return dish.map(mapperDish :: toDish)
+                .orElse(null);
+    }
+
+    @Override
+    public void setEnableAndDisable(Integer id, Boolean bol) {
+        DishEntity dis= repositoryJpa.findById(id).get();
+        dis.setActive(bol);
+        repositoryJpa.save(dis);
+    }
 }
