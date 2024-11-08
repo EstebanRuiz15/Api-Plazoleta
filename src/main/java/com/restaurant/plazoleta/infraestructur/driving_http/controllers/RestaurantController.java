@@ -1,8 +1,12 @@
 package com.restaurant.plazoleta.infraestructur.driving_http.controllers;
 
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
+import com.restaurant.plazoleta.domain.model.PaginGeneric;
+import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.RestaurantRequestDto;
+import com.restaurant.plazoleta.infraestructur.driving_http.dtos.response.AllRestaurantsResponse;
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IRestauratRequestMapper;
+import com.restaurant.plazoleta.infraestructur.driving_http.mappers.RestaurantToDtoMapper;
 import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,10 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestaurantController {
     private final IRestaurantService restaurantService;
     private final IRestauratRequestMapper restaurantMapper;
+    private final RestaurantToDtoMapper responseMapper;
 
     @Operation(
             summary = "Create a new restaurant",
@@ -64,6 +66,16 @@ public class RestaurantController {
             @Valid @RequestBody @Parameter(description = InfraConstants.DETAIL)RestaurantRequestDto request){
         restaurantService.saveRestaurant(restaurantMapper.toRestaurant(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(InfraConstants.CREATE_RESTAURANT_SUCCES);
+
+    }
+
+    @GetMapping("/getRestaurants{page}{size}")
+    public ResponseEntity<PaginGeneric<AllRestaurantsResponse>> getAllRestaurants(
+                            @RequestParam Integer page, @RequestParam Integer size ){
+        PaginGeneric<Restaurant> resta= restaurantService.getAllRestaurants(page, size);
+        return ResponseEntity.ok(
+                responseMapper.toPaginRestaurant(resta)
+        );
 
     }
 

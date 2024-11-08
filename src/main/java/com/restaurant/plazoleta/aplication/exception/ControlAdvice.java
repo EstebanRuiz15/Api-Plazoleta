@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
+import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -41,7 +42,7 @@ public class ControlAdvice {
     @ExceptionHandler(ErrorExceptionParam.class)
     public ResponseEntity<?> resourceNotFoundException(ErrorExceptionParam ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -54,7 +55,7 @@ public class ControlAdvice {
     @ExceptionHandler(ErrorExceptionUserInvalid.class)
     public ResponseEntity<?> resourceNotFoundException(ErrorExceptionUserInvalid ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -67,11 +68,11 @@ public class ControlAdvice {
     @ExceptionHandler(ErrorFeignException.class)
     public ResponseEntity<?> handleErrorFeignException(ErrorFeignException ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorResponse = new ExceptionResponse(
                 HttpStatus.SERVICE_UNAVAILABLE.value(),
-                ex.getMessage(),
+                "Service Unavailable",
                 details
         );
 
@@ -81,7 +82,7 @@ public class ControlAdvice {
     @ExceptionHandler(ExceptionCategory.class)
     public ResponseEntity<?> handlerCategoryException(ExceptionCategory ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -94,7 +95,7 @@ public class ControlAdvice {
     @ExceptionHandler(ExceptionCategoryNotFound.class)
     public ResponseEntity<?> resourceNotFoundException(ExceptionCategoryNotFound ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -107,7 +108,7 @@ public class ControlAdvice {
     @ExceptionHandler(ExceptionRestaurantNotFound.class)
     public ResponseEntity<?> resourceNotFoundException(ExceptionRestaurantNotFound ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -119,7 +120,7 @@ public class ControlAdvice {
     @ExceptionHandler(ExceptionDishNotFound.class)
     public ResponseEntity<?> resourceNotFoundException(ExceptionDishNotFound ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -132,7 +133,7 @@ public class ControlAdvice {
     @ExceptionHandler(ExceptionNoOwnerOfThisRestaurant.class)
     public ResponseEntity<?> ExceptionNoOwnerRestaurant(ExceptionNoOwnerOfThisRestaurant ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -144,7 +145,7 @@ public class ControlAdvice {
     @ExceptionHandler(ExceptionEnableAndDisableDish.class)
     public ResponseEntity<?> ExceptionEnableAndDisable(ExceptionEnableAndDisableDish ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
-        details.put("error", ex.getMessage());
+        details.put(InfraConstants.ERROR, ex.getMessage());
 
         ExceptionResponse errorDetails = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),

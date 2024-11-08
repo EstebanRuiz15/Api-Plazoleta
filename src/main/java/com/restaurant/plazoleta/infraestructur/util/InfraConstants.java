@@ -31,6 +31,7 @@ public final class InfraConstants {
     public static final String DIS_UPDATE_SUCCES="Modify dish successfull";
     public static final String DISH_DISABLE_SUCCES="Disbled dish successfull";
     public static final String DISH_ENABLE_SUCCES="Enable dish successfull";
+    public static final String ERROR="error";
 
 
 }

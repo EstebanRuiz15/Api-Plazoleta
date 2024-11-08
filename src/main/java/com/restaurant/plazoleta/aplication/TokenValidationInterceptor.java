@@ -20,6 +20,7 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
 
         String requestURI = request.getRequestURI();
+
         if(requestURI.startsWith("/swagger-ui") ||requestURI.startsWith( "/v3/api-docs")) return true;
 
         if (token == null) {
@@ -36,8 +37,8 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if (requestURI.equals("/Dish/update/{id}") || requestURI.equals("/Dish/")
-                || requestURI.startsWith("/Dish/enable/{id}")||requestURI.startsWith("/Dish/disable/{id}") ) {
+        if (requestURI.startsWith("/Dish/update/") || requestURI.equals("/Dish/")
+                || requestURI.startsWith("/Dish/enable")||requestURI.startsWith("/Dish/disable") ) {
             if (!authServiceClient.validateOWNER()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Unauthorized for this method");
@@ -45,6 +46,14 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
+        if(requestURI.equals("/restaurant/getRestaurants")){
+            if (!authServiceClient.validateToken()) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("Unauthorized for this method");
+                return false;
+            }
+        }
+            
         return true;
     }
 }

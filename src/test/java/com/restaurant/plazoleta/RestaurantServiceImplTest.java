@@ -1,8 +1,10 @@
 package com.restaurant.plazoleta;
 
+import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
 import com.restaurant.plazoleta.domain.exception.ErrorExceptionUserInvalid;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantPersistance;
 import com.restaurant.plazoleta.domain.interfaces.IUserServiceClient;
+import com.restaurant.plazoleta.domain.model.PaginGeneric;
 import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.domain.model.User;
 import com.restaurant.plazoleta.domain.services.RestaurantServiceImpl;
@@ -88,6 +90,34 @@ class RestaurantServiceImplTest {
         );
         verify(restaurantPersistance, never()).saveRestaurant(any(), any());
     }
+
+    @Test
+    void testGetAllRestaurants_InvalidPage() {
+        Exception exception = assertThrows(ErrorExceptionParam.class, () -> {
+            restaurantService.getAllRestaurants(0, 1);
+        });
+        assertEquals("The page or the size cannot be 0", exception.getMessage());
+    }
+
+    @Test
+    void testGetAllRestaurants_InvalidSize() {
+        Exception exception = assertThrows(ErrorExceptionParam.class, () -> {
+            restaurantService.getAllRestaurants(1, 0);
+        });
+        assertEquals("The page or the size cannot be 0", exception.getMessage());
+    }
+
+    @Test
+    void testGetAllRestaurants_Success() {
+        PaginGeneric<Restaurant> paginGenericMock = mock(PaginGeneric.class);
+        when(restaurantPersistance.getAllRestaurants(1, 10)).thenReturn(paginGenericMock);
+
+        PaginGeneric<Restaurant> result = restaurantService.getAllRestaurants(1, 10);
+
+        assertNotNull(result);
+        verify(restaurantPersistance).getAllRestaurants(1, 10);
+    }
+
 
     private Restaurant createValidRestaurant() {
         Restaurant restaurant = new Restaurant();
