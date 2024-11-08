@@ -1,5 +1,6 @@
 package com.restaurant.plazoleta.infraestructur.driving_http.controllers;
 
+import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
 import com.restaurant.plazoleta.domain.model.PaginGeneric;
 import com.restaurant.plazoleta.domain.model.Restaurant;
@@ -86,14 +87,14 @@ public class RestaurantController {
                             responseCode = "400",
                             description = "Bad Request due to invalid page or size parameters",
                             content = @Content(
-                                    schema = @Schema(implementation = ErrorResponse.class)
+                                    schema = @Schema(implementation = ErrorExceptionParam.class)
                             )
                     ),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized: The user is not authenticated",
                             content = @Content(
-                                    schema = @Schema(implementation = ErrorResponse.class)
+                                    schema = @Schema(implementation = ErrorExceptionParam.class)
                             )
                     ),
                     @ApiResponse(
