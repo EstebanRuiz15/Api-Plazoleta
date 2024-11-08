@@ -34,7 +34,8 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if (requestURI.startsWith("/Dish/update/{id}") || requestURI.startsWith("/Dish/")) {
+        if (requestURI.startsWith("/Dish/update/{id}") || requestURI.startsWith("/Dish/")
+                || requestURI.startsWith("/Dish/enable/{id}")||requestURI.startsWith("/Dish/disable/{id}") ) {
             if (!authServiceClient.validateOWNER()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Unauthorized for this method");

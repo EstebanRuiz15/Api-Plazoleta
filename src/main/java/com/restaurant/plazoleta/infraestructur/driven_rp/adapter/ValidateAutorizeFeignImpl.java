@@ -72,4 +72,9 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
         }
     }
+
+    @Override
+    public Integer getUserId() {
+       return feignClient.getUserId();
+    }
 }

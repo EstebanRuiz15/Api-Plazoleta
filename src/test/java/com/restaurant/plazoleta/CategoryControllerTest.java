@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class CategoryControllerTest {
+class CategoryControllerTest {
 
     @Mock
     private ICategoriaServices service;
@@ -32,7 +32,7 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testCreateCategory_Success() throws Exception {
+     void testCreateCategory_Success() throws Exception {
         String categoryName = "Italian";
 
         doNothing().when(service).createCategory(categoryName);

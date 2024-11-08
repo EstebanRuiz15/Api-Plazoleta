@@ -2,13 +2,11 @@ package com.restaurant.plazoleta;
 
 import static org.mockito.Mockito.*;
 
-import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
-import com.restaurant.plazoleta.domain.exception.ExceptionCategoryNotFound;
-import com.restaurant.plazoleta.domain.exception.ExceptionDishNotFound;
-import com.restaurant.plazoleta.domain.exception.ExceptionRestaurantNotFound;
+import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.interfaces.IDishPersistance;
 import com.restaurant.plazoleta.domain.interfaces.ICategoriaPersistance;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantPersistance;
+import com.restaurant.plazoleta.domain.interfaces.IValidateAutorizeFeign;
 import com.restaurant.plazoleta.domain.model.Category;
 import com.restaurant.plazoleta.domain.model.Dish;
 import com.restaurant.plazoleta.domain.model.Restaurant;
@@ -28,18 +26,26 @@ class DishServiceImplTest {
     private ICategoriaPersistance categoriaServices;
     @Mock
     private IRestaurantPersistance restaurantService;
+    @Mock
+    private IValidateAutorizeFeign clientFeign;
     private DishServiceImpl dishService;
     private Dish dishh;
+    private Restaurant restaurant;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        dishService = new DishServiceImpl(persistanceDish, categoriaServices, restaurantService);
+        dishService = new DishServiceImpl(persistanceDish, categoriaServices, restaurantService, clientFeign);
         dishh = new Dish();
         dishh.setName("Test Dish");
         dishh.setDescription("Test Description");
         dishh.setPrice(100.0);
         dishh.setCategory(1);
         dishh.setRestaurant(1);
+        dishh.setActive(true);
+
+        restaurant = new Restaurant();
+        restaurant.setId(1);
+        restaurant.setOwner(1);
     }
 
     @Test
@@ -150,13 +156,91 @@ class DishServiceImplTest {
         assertEquals(ConstantsDomain.NOT_ALL_FIELD_EMPTY, exception.getMessage());
         verify(persistanceDish, never()).updateDish(any(Dish.class), anyInt());
     }
+    @Test
+    public void testDisableDishSuccess() {
+        when(persistanceDish.findById(1)).thenReturn(dishh);
+        when(restaurantService.findById(1)).thenReturn(restaurant);
+        when(clientFeign.getUserId()).thenReturn(1);
+
+        dishService.disableDish(1);
+
+        verify(persistanceDish).setEnableAndDisable(1, false);
+    }
 
     @Test
-    void modifyDish_ShouldUpdateDishSuccessfully() {
-        when(persistanceDish.existFindById(1)).thenReturn(true);
+    public void testDisableDishAlreadyDisabled() {
+        dishh.setActive(false);
+        when(persistanceDish.findById(1)).thenReturn(dishh);
+        when(restaurantService.findById(1)).thenReturn(restaurant);
+        when(clientFeign.getUserId()).thenReturn(1);
 
-        dishService.modifyDish(dishh, 1);
+        Exception exception = assertThrows(ExceptionEnableAndDisableDish.class, () -> {
+            dishService.disableDish(1);
+        });
 
-        verify(persistanceDish, times(1)).updateDish(dishh, 1);
+        assertEquals(ConstantsDomain.ALREADY_DISABLE, exception.getMessage());
+        verify(persistanceDish, never()).setEnableAndDisable(anyInt(), anyBoolean());
+    }
+
+    @Test
+    public void testEnableDishSuccess() {
+        dishh.setActive(false);
+        when(persistanceDish.findById(1)).thenReturn(dishh);
+        when(restaurantService.findById(1)).thenReturn(restaurant);
+        when(clientFeign.getUserId()).thenReturn(1);
+
+        dishService.enableDish(1);
+
+        verify(persistanceDish).setEnableAndDisable(1, true);
+    }
+
+    @Test
+    public void testEnableDishAlreadyEnabled() {
+        when(persistanceDish.findById(1)).thenReturn(dishh);
+        when(restaurantService.findById(1)).thenReturn(restaurant);
+        when(clientFeign.getUserId()).thenReturn(1);
+
+        Exception exception = assertThrows(ExceptionEnableAndDisableDish.class, () -> {
+            dishService.enableDish(1);
+        });
+
+        assertEquals(ConstantsDomain.ALREADY_ENABLE, exception.getMessage());
+        verify(persistanceDish, never()).setEnableAndDisable(anyInt(), anyBoolean());
+    }
+    @Test
+    public void testValidateDisableAndEnableDishNotFound() {
+        when(persistanceDish.findById(1)).thenReturn(null);
+
+        Exception exception = assertThrows(ExceptionDishNotFound.class, () -> {
+            dishService.disableDish(1);
+        });
+
+        assertEquals(ConstantsDomain.Dish_NOT_FOUND + "1", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateDisableAndEnableDishRestaurantNotFound() {
+        when(persistanceDish.findById(1)).thenReturn(dishh);
+        when(restaurantService.findById(1)).thenReturn(null);
+
+        Exception exception = assertThrows(ExceptionRestaurantNotFound.class, () -> {
+            dishService.disableDish(1);
+        });
+
+        assertEquals(ConstantsDomain.RESTAURANT_NOT_FOUND + "1", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateDisableAndEnableDishNotOwner() {
+        when(persistanceDish.findById(1)).thenReturn(dishh);
+        when(restaurantService.findById(1)).thenReturn(restaurant);
+        when(clientFeign.getUserId()).thenReturn(2);
+
+        Exception exception = assertThrows(ExceptionNoOwnerOfThisRestaurant.class, () -> {
+            dishService.disableDish(1);
+        });
+
+        assertEquals(ConstantsDomain.NO_OWNER_THIS_REST, exception.getMessage());
     }
 }
+

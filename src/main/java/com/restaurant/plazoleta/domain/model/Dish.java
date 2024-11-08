@@ -17,6 +17,15 @@ public class Dish {
     private int category;
 
     private LocalDateTime createdAt;
+    private Boolean active;
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
     public Dish() {
     }

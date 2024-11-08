@@ -1,7 +1,9 @@
 package com.restaurant.plazoleta;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurant.plazoleta.aplication.TokenValidationInterceptor;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
+import com.restaurant.plazoleta.domain.interfaces.IValidateAutorizeFeign;
 import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.infraestructur.driving_http.controllers.RestaurantController;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.RestaurantRequestDto;
@@ -17,10 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @WebMvcTest(RestaurantController.class)
 class RestaurantControllerTest {
@@ -36,6 +38,10 @@ class RestaurantControllerTest {
 
     @MockBean
     private IRestauratRequestMapper restaurantMapper;
+    @MockBean
+    private IValidateAutorizeFeign authServiceClient;
+    @MockBean
+    private TokenValidationInterceptor tokenValidationInterceptor;
 
     private RestaurantRequestDto validRequest;
     private Restaurant mappedRestaurant;
@@ -59,7 +65,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithValidRequest_ShouldReturnCreated() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
         ResultActions result = mockMvc.perform(post("/restaurant/")
@@ -74,7 +80,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithEmptyName_ShouldReturnBadRequest() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setName(null);
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
@@ -88,7 +94,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithInvalidName_ShouldReturnBadRequest() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setName("1111123");
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
@@ -102,7 +108,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithInvalidNit_ShouldReturnBadRequest() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setNit(null);
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
@@ -116,7 +122,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithInvalidPhoneNumber_ShouldReturnBadRequest() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setPhoneNumber("invalid-phone");
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
@@ -130,7 +136,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithInvalidLogoUrl_ShouldReturnBadRequest() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setLogoUrl("invalid-url");
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
@@ -144,7 +150,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithNegativeOwnerId_ShouldReturnBadRequest() throws Exception {
-
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setOwner(-1);
         String requestJson = objectMapper.writeValueAsString(validRequest);
 
@@ -157,6 +163,7 @@ class RestaurantControllerTest {
 
     @Test
     void createRestaurant_WithEmptyAddress_ShouldReturnBadRequest() throws Exception {
+        doReturn(true).when(tokenValidationInterceptor).preHandle(any(), any(), any());
         validRequest.setAddress("");
         String requestJson = objectMapper.writeValueAsString(validRequest);
 

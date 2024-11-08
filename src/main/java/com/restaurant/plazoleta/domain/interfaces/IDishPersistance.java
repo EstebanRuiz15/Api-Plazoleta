@@ -9,4 +9,6 @@ public interface IDishPersistance
     void saveDish(Dish dish, Restaurant restaurant, Category category);
     boolean existFindById(Integer id);
     void updateDish(Dish request, Integer id);
+    Dish findById(Integer id);
+    void setEnableAndDisable(Integer id, Boolean bol);
 }
