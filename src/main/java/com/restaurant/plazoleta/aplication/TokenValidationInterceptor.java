@@ -46,11 +46,9 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if(requestURI.equals("/restaurant/getRestaurants")){
-            if (!authServiceClient.validateToken()) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Unauthorized for this method");
-                return false;
+        if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish")){
+            if (authServiceClient.validateToken()) {
+                return true;
             }
         }
             

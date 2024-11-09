@@ -65,6 +65,7 @@ public class ValidateAutorizeFeignImpl implements IValidateAutorizeFeign {
     @Override
     public Boolean validateToken() {
         try {
+
             return feignClient.validateToken();
         } catch (FeignException e) {
             if (e.status() == InfraConstants.UNAUTHORIZED_CODE) {

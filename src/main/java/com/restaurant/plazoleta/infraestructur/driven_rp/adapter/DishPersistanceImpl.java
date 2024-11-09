@@ -1,9 +1,7 @@
 package com.restaurant.plazoleta.infraestructur.driven_rp.adapter;
 
 import com.restaurant.plazoleta.domain.interfaces.IDishPersistance;
-import com.restaurant.plazoleta.domain.model.Category;
-import com.restaurant.plazoleta.domain.model.Dish;
-import com.restaurant.plazoleta.domain.model.Restaurant;
+import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.infraestructur.driven_rp.entity.CategoryEntity;
 import com.restaurant.plazoleta.infraestructur.driven_rp.entity.DishEntity;
 import com.restaurant.plazoleta.infraestructur.driven_rp.entity.RestaurantEntity;
@@ -12,6 +10,10 @@ import com.restaurant.plazoleta.infraestructur.driven_rp.mapper.IDishMapperEntit
 import com.restaurant.plazoleta.infraestructur.driven_rp.mapper.IMapperRestaurantToEntity;
 import com.restaurant.plazoleta.infraestructur.driven_rp.persistence.DishRepositoryJpa;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ public class DishPersistanceImpl implements IDishPersistance {
         RestaurantEntity rest=restaurantMapper.toEntity(restaurant);
         dishh.setCategory(cat);
         dishh.setRestaurant(rest);
+        dishh.setActive(Boolean.TRUE);
         repositoryJpa.save(dishh);
     }
 
@@ -71,4 +74,20 @@ public class DishPersistanceImpl implements IDishPersistance {
         dis.setActive(bol);
         repositoryJpa.save(dis);
     }
+
+    @Override
+    public PaginGeneric<DishResponse> getAllDish(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("name")));
+        Page<DishEntity> dishPage = repositoryJpa.findByActiveTrue(pageable);
+        return mapperDish.toPaginDish(dishPage);
+    }
+
+    @Override
+    public PaginGeneric<DishResponse> getAllDishWithFilterCategory(Integer page, Integer size, String categoryFilter) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("name")));
+        Page<DishEntity> dishPage = repositoryJpa.
+                findByCategoryNameContainingIgnoreCaseAndActiveTrue(categoryFilter,pageable);
+        return mapperDish.toPaginDish(dishPage);
+    }
+
 }

@@ -4,6 +4,7 @@ import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
 import com.restaurant.plazoleta.domain.model.PaginGeneric;
 import com.restaurant.plazoleta.domain.model.Restaurant;
+import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.RestaurantRequestDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.response.AllRestaurantsResponse;
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IRestauratRequestMapper;
@@ -108,7 +109,8 @@ public class RestaurantController {
     )
     @GetMapping("/getRestaurants{page}{size}")
     public ResponseEntity<PaginGeneric<AllRestaurantsResponse>> getAllRestaurants(
-                            @RequestParam Integer page, @RequestParam Integer size ){
+            @RequestParam (defaultValue = InfraConstants.ONE )Integer page,
+            @RequestParam (defaultValue = InfraConstants.TEN)Integer size ){
         PaginGeneric<Restaurant> resta= restaurantService.getAllRestaurants(page, size);
         return ResponseEntity.ok(
                 responseMapper.toPaginRestaurant(resta)

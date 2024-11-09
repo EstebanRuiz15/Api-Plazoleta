@@ -35,4 +35,9 @@ public class CategoryPersistanceImpl implements ICategoriaPersistance {
         return category.map(mapper::toCategory)
                 .orElse(null);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return respositoryJpa.existsByName(name);
+    }
 }

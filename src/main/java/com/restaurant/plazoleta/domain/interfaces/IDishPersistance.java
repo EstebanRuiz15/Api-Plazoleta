@@ -1,8 +1,6 @@
 package com.restaurant.plazoleta.domain.interfaces;
 
-import com.restaurant.plazoleta.domain.model.Category;
-import com.restaurant.plazoleta.domain.model.Dish;
-import com.restaurant.plazoleta.domain.model.Restaurant;
+import com.restaurant.plazoleta.domain.model.*;
 
 public interface IDishPersistance
 {
@@ -11,4 +9,7 @@ public interface IDishPersistance
     void updateDish(Dish request, Integer id);
     Dish findById(Integer id);
     void setEnableAndDisable(Integer id, Boolean bol);
+    PaginGeneric<DishResponse> getAllDish(Integer page, Integer size);
+    PaginGeneric<DishResponse> getAllDishWithFilterCategory(Integer page, Integer size, String categoryFilter);
+
 }
