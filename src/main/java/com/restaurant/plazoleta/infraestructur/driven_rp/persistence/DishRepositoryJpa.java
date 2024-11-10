@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DishRepositoryJpa extends JpaRepository<DishEntity, Integer> {
-    Page<DishEntity> findByCategoryNameContainingIgnoreCaseAndActiveTrue(String categoryName, Pageable pageable);
-    Page<DishEntity> findByActiveTrue(Pageable pageable);
+    Page<DishEntity> findByCategoryNameContainingIgnoreCaseAndActiveTrueAndRestaurantId(String categoryName,  Pageable pageable,Integer restaurantId);
+    Page<DishEntity> findByActiveTrueAndRestaurantId( Pageable pageable,Integer restaurantId);
 }

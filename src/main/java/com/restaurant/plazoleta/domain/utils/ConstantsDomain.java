@@ -21,5 +21,6 @@ public final class ConstantsDomain {
     public static final String ALREADY_DISABLE="the dish is already disabled";
     public static final String ALREADY_ENABLE="the dish is already enable";
     public static final String PAGE_OR_SIZE_ERROR="The page or the size cannot be 0";
+    public static final String REST_ID_NOT_NULL="Restaurant id cannot be null";
 }
 

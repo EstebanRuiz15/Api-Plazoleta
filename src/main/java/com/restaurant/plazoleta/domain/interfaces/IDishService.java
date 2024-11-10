@@ -9,6 +9,6 @@ public interface IDishService {
     void modifyDish(Dish dish, Integer id);
     void disableDish(Integer id);
     void enableDish(Integer id);
-    PaginGeneric<DishResponse> getAllDish(Integer page, Integer size, String categoryFilter);
+    PaginGeneric<DishResponse> getAllDishAtRestaurant(Integer page, Integer size, String categoryFilter,Integer restId);
 
 }

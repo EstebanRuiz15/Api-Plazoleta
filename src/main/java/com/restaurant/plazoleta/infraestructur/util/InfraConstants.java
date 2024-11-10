@@ -34,6 +34,7 @@ public final class InfraConstants {
     public static final Integer UNAUTHORIZED_CODE=401;
     public static final String TEN="10";
     public static final String ONE="1";
+    public static final String NO_DISHES_FOR_THIS_RESTAURANT="No dishes enable for this restaurant";
 
 
 

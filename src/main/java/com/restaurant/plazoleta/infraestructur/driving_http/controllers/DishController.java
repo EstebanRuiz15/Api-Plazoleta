@@ -10,6 +10,7 @@ import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.DishReq
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IDishRequestMapper;
 import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -206,7 +207,7 @@ public class DishController {
     }
 
     @Operation(
-            summary = "Get all Dish",
+            summary = "list all the dishes in a restaurant ",
             description = "This endpoint retrieves all dish with pagination. It also allows you to filter by category Any logged-in user can access this endpoint\n\n " +
                     "If the user is not authenticated, an 'Unauthorized' error will be returned.",
             responses = {
@@ -249,11 +250,12 @@ public class DishController {
             }
     )
     @GetMapping("/getAllDish")
-    public ResponseEntity<PaginGeneric<DishResponse>> getAllDish(
+    public ResponseEntity<PaginGeneric<DishResponse>> getAllDishOfRestaurant(
+            @RequestParam Integer restaurantId ,
             @RequestParam (defaultValue = InfraConstants.ONE) Integer page,
             @RequestParam (defaultValue =InfraConstants.TEN) Integer size,
             @RequestParam (defaultValue = "") String category){
-        PaginGeneric<DishResponse> resp=(service.getAllDish(page, size, category));
+        PaginGeneric<DishResponse> resp=(service.getAllDishAtRestaurant(page, size, category, restaurantId));
         return ResponseEntity.ok(resp);
     }
 }

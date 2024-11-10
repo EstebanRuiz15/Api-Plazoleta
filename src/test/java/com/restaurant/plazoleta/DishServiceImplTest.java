@@ -245,14 +245,15 @@ class DishServiceImplTest {
     void getAllDish_WhenPageAndSizeAreValid_AndNoCategoryFilter_ReturnsPagedDishes() {
         int page = 1;
         int size = 10;
+        int rest=1;
         PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
-        when(persistanceDish.getAllDish(page, size)).thenReturn(expectedResponse);
+        when(persistanceDish.getAllDishAtRestaurant(page, size,rest)).thenReturn(expectedResponse);
 
-        PaginGeneric<DishResponse> result = dishService.getAllDish(page, size, null);
+        PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, null,rest);
 
         assertEquals(expectedResponse, result);
-        verify(persistanceDish).getAllDish(page, size);
-        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString());
+        verify(persistanceDish).getAllDishAtRestaurant(page, size,rest);
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
     }
 
     @Test
@@ -260,19 +261,21 @@ class DishServiceImplTest {
 
         int page = 1;
         int size = 10;
+        int rest=1;
+
         String category = "Italian";
         PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
 
         when(categoriaServices.existsByName(category.trim())).thenReturn(true);
-        when(persistanceDish.getAllDishWithFilterCategory(page, size, category))
+        when(persistanceDish.getAllDishWithFilterCategory(page, size, category, rest))
                 .thenReturn(expectedResponse);
 
-        PaginGeneric<DishResponse> result = dishService.getAllDish(page, size, category);
+        PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, category, rest);
 
         assertEquals(expectedResponse, result);
         verify(categoriaServices).existsByName(category.trim());
-        verify(persistanceDish).getAllDishWithFilterCategory(page, size, category);
-        verify(persistanceDish, never()).getAllDish(anyInt(), anyInt());
+        verify(persistanceDish).getAllDishWithFilterCategory(page, size, category, rest);
+        verify(persistanceDish, never()).getAllDishAtRestaurant(anyInt(), anyInt(),anyInt());
     }
 
     @Test
@@ -280,14 +283,15 @@ class DishServiceImplTest {
 
         int page = 0;
         int size = 10;
+        int rest=1;
 
         assertThrows(ErrorExceptionParam.class, () ->
-                        dishService.getAllDish(page, size, null),
+                        dishService.getAllDishAtRestaurant(page, size, null,rest),
                 ConstantsDomain.PAGE_OR_SIZE_ERROR
         );
 
-        verify(persistanceDish, never()).getAllDish(anyInt(), anyInt());
-        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString());
+        verify(persistanceDish, never()).getAllDishAtRestaurant(anyInt(), anyInt(),anyInt());
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
     }
 
     @Test
@@ -295,14 +299,15 @@ class DishServiceImplTest {
 
         int page = 1;
         int size = 0;
+        int rest=1;
 
         assertThrows(ErrorExceptionParam.class, () ->
-                        dishService.getAllDish(page, size, null),
+                        dishService.getAllDishAtRestaurant(page, size, null,rest),
                 ConstantsDomain.PAGE_OR_SIZE_ERROR
         );
 
-        verify(persistanceDish, never()).getAllDish(anyInt(), anyInt());
-        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString());
+        verify(persistanceDish, never()).getAllDishAtRestaurant(anyInt(), anyInt(),anyInt());
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
     }
 
     @Test
@@ -310,17 +315,19 @@ class DishServiceImplTest {
 
         int page = 1;
         int size = 10;
+        int rest=1;
+
         String category = "NonExistentCategory";
 
         when(categoriaServices.existsByName(category.trim())).thenReturn(false);
 
         assertThrows(ExceptionCategoryNotFound.class, () ->
-                        dishService.getAllDish(page, size, category),
+                        dishService.getAllDishAtRestaurant(page, size, category,rest),
                 ConstantsDomain.CATEGORY_NOT_FOUND + category
         );
 
         verify(categoriaServices).existsByName(category.trim());
-        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString());
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
     }
 
     @Test
@@ -328,16 +335,18 @@ class DishServiceImplTest {
 
         int page = 1;
         int size = 10;
+        int rest=1;
+
         String category = "";
         PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
 
-        when(persistanceDish.getAllDish(page, size)).thenReturn(expectedResponse);
+        when(persistanceDish.getAllDishAtRestaurant(page, size,rest)).thenReturn(expectedResponse);
 
-        PaginGeneric<DishResponse> result = dishService.getAllDish(page, size, category);
+        PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, category,rest);
 
         assertEquals(expectedResponse, result);
-        verify(persistanceDish).getAllDish(page, size);
-        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString());
+        verify(persistanceDish).getAllDishAtRestaurant(page, size,rest);
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
     }
 }
 
