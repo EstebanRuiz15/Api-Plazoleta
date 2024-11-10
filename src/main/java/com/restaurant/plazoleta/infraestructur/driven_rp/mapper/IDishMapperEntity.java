@@ -11,6 +11,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface IDishMapperEntity {
     @Mapping(target= "restaurant", ignore = true)
@@ -39,4 +41,5 @@ public interface IDishMapperEntity {
     default String categoryToCategoryName(CategoryEntity category) {
         return category != null ? category.getName() : null;
     }
+    List<Dish> toListDish(List<DishEntity> listDish);
 }

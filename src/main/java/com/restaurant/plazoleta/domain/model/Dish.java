@@ -4,6 +4,8 @@ package com.restaurant.plazoleta.domain.model;
 import java.time.LocalDateTime;
 
 public class Dish {
+    private Integer id;
+
     private String name;
 
     private Double price;
@@ -38,6 +40,14 @@ public class Dish {
         this.restaurant = restaurant;
         this.category = category;
         this.createdAt = createdAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

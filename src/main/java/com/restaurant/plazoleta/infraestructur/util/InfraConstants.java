@@ -35,6 +35,11 @@ public final class InfraConstants {
     public static final String TEN="10";
     public static final String ONE="1";
     public static final String NO_DISHES_FOR_THIS_RESTAURANT="No dishes enable for this restaurant";
+    public static final String NOT_NULL_FIELDS = "there can be no empty fields";
+    public static final String THE_FIELD_WOLD_POSITIVE="Quantity must be than 0";
+    public static final String ONLY_BUMBERS_REGEX="^[0-9]+$";
+    public static final String ONLY_NUMBER_MESSAGE="The field must contain only numbers";
+    public static final String REGISTER_ORDER_SUCCES="Register order succes";
 
 
 

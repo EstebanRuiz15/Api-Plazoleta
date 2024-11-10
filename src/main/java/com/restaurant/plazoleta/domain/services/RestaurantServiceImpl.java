@@ -39,4 +39,9 @@ public class RestaurantServiceImpl implements IRestaurantService {
         if(page<1 || size <1)throw  new ErrorExceptionParam(ConstantsDomain.PAGE_OR_SIZE_ERROR);
         return persistance.getAllRestaurants(page,size);
     }
+
+    @Override
+    public Restaurant findById(Integer id) {
+        return persistance.findById(id);
+    }
 }

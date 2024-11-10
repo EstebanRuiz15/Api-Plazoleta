@@ -164,4 +164,17 @@ public class ControlAdvice {
         return new ResponseEntity<>("Missing required parameter: " +ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ExceptionNotFoundUser.class)
+    public ResponseEntity<?> resourceNotFoundException(ExceptionNotFoundUser ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put(InfraConstants.ERROR, ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Error in fields",
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
 }

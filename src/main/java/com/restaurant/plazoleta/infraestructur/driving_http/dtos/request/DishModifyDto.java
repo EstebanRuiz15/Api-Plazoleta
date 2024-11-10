@@ -1,5 +1,7 @@
 package com.restaurant.plazoleta.infraestructur.driving_http.dtos.request;
 
+import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
