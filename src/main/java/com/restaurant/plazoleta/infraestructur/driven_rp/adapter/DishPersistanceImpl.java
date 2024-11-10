@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -92,6 +93,11 @@ public class DishPersistanceImpl implements IDishPersistance {
                 findByCategoryNameContainingIgnoreCaseAndActiveTrueAndRestaurantId(categoryFilter,pageable, restId);
         if(dishPage.isEmpty() || dishPage == null)  throw new ExceptionEnableAndDisableDish(InfraConstants.NO_DISHES_FOR_THIS_RESTAURANT);
         return mapperDish.toPaginDish(dishPage);
+    }
+
+    @Override
+    public List<Dish> getAllDishAtRestaurantActive(Integer restaurantId) {
+        return mapperDish.toListDish(repositoryJpa.findByActiveTrueAndRestaurantId(restaurantId));
     }
 
 }

@@ -4,7 +4,8 @@ import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.interfaces.*;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
-import org.apache.tomcat.util.bcel.Const;
+
+import java.util.List;
 
 public class DishServiceImpl implements IDishService {
     private final IDishPersistance persistanceDish;
@@ -86,6 +87,11 @@ public class DishServiceImpl implements IDishService {
             throw new ExceptionCategoryNotFound(ConstantsDomain.CATEGORY_NOT_FOUND+categoryFilter);
         }
         return persistanceDish.getAllDishWithFilterCategory(page, size, categoryFilter, restId);
+    }
+
+    @Override
+    public List<Dish> getAllDishAtRestaurantActive(Integer restaurantId) {
+        return persistanceDish.getAllDishAtRestaurantActive(restaurantId);
     }
 
     private Dish validateDisableAndEnableDish(Integer id){

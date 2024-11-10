@@ -22,5 +22,8 @@ public final class ConstantsDomain {
     public static final String ALREADY_ENABLE="the dish is already enable";
     public static final String PAGE_OR_SIZE_ERROR="The page or the size cannot be 0";
     public static final String REST_ID_NOT_NULL="Restaurant id cannot be null";
+    public static final String SOME_DISHES_NOT_FOUND="Some dishes in the order are not available at the restaurant";
+    public static final String NOT_FOUND_CLIENT="Not found client";
+    public static final String NOT_FOUND_CHEF="Not found chef";
 }
 

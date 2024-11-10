@@ -46,7 +46,7 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish")){
+        if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish") || requestURI.equals("/order/")){
             if (authServiceClient.validateToken()) {
                 return true;
             }
