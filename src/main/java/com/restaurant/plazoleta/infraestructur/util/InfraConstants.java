@@ -4,7 +4,6 @@ public final class InfraConstants {
     private InfraConstants(){
         throw new IllegalStateException("Utility class");
     }
-    public static final String CREATE_OWNER_SUCCES="Create new owner Successfull";
     public static final String RESTAURANT_NAME_EMPTY = "Restaurant name cannot be empty.";
     public static final String RESTAURANT_NAME_INVALID = "Restaurant name cannot be ampty or only numbers.";
     public static final String NIT_EMPTY = "NIT cannot be null.";
@@ -31,6 +30,12 @@ public final class InfraConstants {
     public static final String DIS_UPDATE_SUCCES="Modify dish successfull";
     public static final String DISH_DISABLE_SUCCES="Disbled dish successfull";
     public static final String DISH_ENABLE_SUCCES="Enable dish successfull";
+    public static final String ERROR="error";
+    public static final Integer UNAUTHORIZED_CODE=401;
+    public static final String TEN="10";
+    public static final String ONE="1";
+    public static final String NO_DISHES_FOR_THIS_RESTAURANT="No dishes enable for this restaurant";
+
 
 
 }

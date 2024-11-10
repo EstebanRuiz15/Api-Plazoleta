@@ -1,13 +1,19 @@
 package com.restaurant.plazoleta.infraestructur.driving_http.controllers;
 
+import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
+import com.restaurant.plazoleta.domain.exception.ExceptionCategoryNotFound;
 import com.restaurant.plazoleta.domain.interfaces.IDishService;
+import com.restaurant.plazoleta.domain.model.DishResponse;
+import com.restaurant.plazoleta.domain.model.PaginGeneric;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.DishModifyDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.DishRequestDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IDishRequestMapper;
 import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -198,5 +204,58 @@ public class DishController {
     public ResponseEntity<String> enableDish(@RequestParam Integer id){
         service.enableDish(id);
         return ResponseEntity.ok(InfraConstants.DISH_ENABLE_SUCCES);
+    }
+
+    @Operation(
+            summary = "list all the dishes in a restaurant ",
+            description = "This endpoint retrieves all dish with pagination. It also allows you to filter by category Any logged-in user can access this endpoint\n\n " +
+                    "If the user is not authenticated, an 'Unauthorized' error will be returned.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully retrieved the list of dish",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PaginGeneric.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request due to invalid page or size parameters",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorExceptionParam.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized: The user is not authenticated",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorExceptionParam.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error due to unexpected server issues",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Category Not Found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ExceptionCategoryNotFound.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/getAllDish")
+    public ResponseEntity<PaginGeneric<DishResponse>> getAllDishOfRestaurant(
+            @RequestParam Integer restaurantId ,
+            @RequestParam (defaultValue = InfraConstants.ONE) Integer page,
+            @RequestParam (defaultValue =InfraConstants.TEN) Integer size,
+            @RequestParam (defaultValue = "") String category){
+        PaginGeneric<DishResponse> resp=(service.getAllDishAtRestaurant(page, size, category, restaurantId));
+        return ResponseEntity.ok(resp);
     }
 }

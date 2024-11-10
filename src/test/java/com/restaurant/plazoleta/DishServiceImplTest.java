@@ -7,9 +7,7 @@ import com.restaurant.plazoleta.domain.interfaces.IDishPersistance;
 import com.restaurant.plazoleta.domain.interfaces.ICategoriaPersistance;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantPersistance;
 import com.restaurant.plazoleta.domain.interfaces.IValidateAutorizeFeign;
-import com.restaurant.plazoleta.domain.model.Category;
-import com.restaurant.plazoleta.domain.model.Dish;
-import com.restaurant.plazoleta.domain.model.Restaurant;
+import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.services.DishServiceImpl;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import org.junit.jupiter.api.BeforeEach;
@@ -241,6 +239,114 @@ class DishServiceImplTest {
         });
 
         assertEquals(ConstantsDomain.NO_OWNER_THIS_REST, exception.getMessage());
+    }
+
+    @Test
+    void getAllDish_WhenPageAndSizeAreValid_AndNoCategoryFilter_ReturnsPagedDishes() {
+        int page = 1;
+        int size = 10;
+        int rest=1;
+        PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
+        when(persistanceDish.getAllDishAtRestaurant(page, size,rest)).thenReturn(expectedResponse);
+
+        PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, null,rest);
+
+        assertEquals(expectedResponse, result);
+        verify(persistanceDish).getAllDishAtRestaurant(page, size,rest);
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
+    }
+
+    @Test
+    void getAllDish_WhenPageAndSizeAreValid_AndHasValidCategoryFilter_ReturnsFilteredDishes() {
+
+        int page = 1;
+        int size = 10;
+        int rest=1;
+
+        String category = "Italian";
+        PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
+
+        when(categoriaServices.existsByName(category.trim())).thenReturn(true);
+        when(persistanceDish.getAllDishWithFilterCategory(page, size, category, rest))
+                .thenReturn(expectedResponse);
+
+        PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, category, rest);
+
+        assertEquals(expectedResponse, result);
+        verify(categoriaServices).existsByName(category.trim());
+        verify(persistanceDish).getAllDishWithFilterCategory(page, size, category, rest);
+        verify(persistanceDish, never()).getAllDishAtRestaurant(anyInt(), anyInt(),anyInt());
+    }
+
+    @Test
+    void getAllDish_WhenPageIsLessThanOne_ThrowsErrorExceptionParam() {
+
+        int page = 0;
+        int size = 10;
+        int rest=1;
+
+        assertThrows(ErrorExceptionParam.class, () ->
+                        dishService.getAllDishAtRestaurant(page, size, null,rest),
+                ConstantsDomain.PAGE_OR_SIZE_ERROR
+        );
+
+        verify(persistanceDish, never()).getAllDishAtRestaurant(anyInt(), anyInt(),anyInt());
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
+    }
+
+    @Test
+    void getAllDish_WhenSizeIsLessThanOne_ThrowsErrorExceptionParam() {
+
+        int page = 1;
+        int size = 0;
+        int rest=1;
+
+        assertThrows(ErrorExceptionParam.class, () ->
+                        dishService.getAllDishAtRestaurant(page, size, null,rest),
+                ConstantsDomain.PAGE_OR_SIZE_ERROR
+        );
+
+        verify(persistanceDish, never()).getAllDishAtRestaurant(anyInt(), anyInt(),anyInt());
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
+    }
+
+    @Test
+    void getAllDish_WhenCategoryDoesNotExist_ThrowsExceptionCategoryNotFound() {
+
+        int page = 1;
+        int size = 10;
+        int rest=1;
+
+        String category = "NonExistentCategory";
+
+        when(categoriaServices.existsByName(category.trim())).thenReturn(false);
+
+        assertThrows(ExceptionCategoryNotFound.class, () ->
+                        dishService.getAllDishAtRestaurant(page, size, category,rest),
+                ConstantsDomain.CATEGORY_NOT_FOUND + category
+        );
+
+        verify(categoriaServices).existsByName(category.trim());
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
+    }
+
+    @Test
+    void getAllDish_WhenCategoryFilterIsEmpty_ReturnsAllDishes() {
+
+        int page = 1;
+        int size = 10;
+        int rest=1;
+
+        String category = "";
+        PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
+
+        when(persistanceDish.getAllDishAtRestaurant(page, size,rest)).thenReturn(expectedResponse);
+
+        PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, category,rest);
+
+        assertEquals(expectedResponse, result);
+        verify(persistanceDish).getAllDishAtRestaurant(page, size,rest);
+        verify(persistanceDish, never()).getAllDishWithFilterCategory(anyInt(), anyInt(), anyString(),anyInt());
     }
 }
 

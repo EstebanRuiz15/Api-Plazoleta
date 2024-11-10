@@ -1,9 +1,11 @@
 package com.restaurant.plazoleta.domain.services;
 
+import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
 import com.restaurant.plazoleta.domain.exception.ErrorExceptionUserInvalid;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantPersistance;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
 import com.restaurant.plazoleta.domain.interfaces.IUserServiceClient;
+import com.restaurant.plazoleta.domain.model.PaginGeneric;
 import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.domain.model.User;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
@@ -30,5 +32,11 @@ public class RestaurantServiceImpl implements IRestaurantService {
         }
 
         persistance.saveRestaurant(request, user);
+    }
+
+    @Override
+    public PaginGeneric<Restaurant> getAllRestaurants(Integer page, Integer size) {
+        if(page<1 || size <1)throw  new ErrorExceptionParam(ConstantsDomain.PAGE_OR_SIZE_ERROR);
+        return persistance.getAllRestaurants(page,size);
     }
 }

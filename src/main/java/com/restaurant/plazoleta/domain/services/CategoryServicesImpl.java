@@ -23,4 +23,9 @@ public class CategoryServicesImpl implements ICategoriaServices {
             throw new ExceptionCategory(ConstantsDomain.NAME_AL_READY_EXIST);
         persistance.save(name);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return persistance.existsByName(name);
+    }
 }

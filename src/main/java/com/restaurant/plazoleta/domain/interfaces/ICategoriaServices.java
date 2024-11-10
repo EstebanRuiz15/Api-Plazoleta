@@ -4,4 +4,5 @@ import com.restaurant.plazoleta.domain.model.Category;
 
 public interface ICategoriaServices {
     void createCategory(String Name);
+    boolean existsByName(String name);
 }

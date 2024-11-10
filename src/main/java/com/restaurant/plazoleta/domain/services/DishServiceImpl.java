@@ -2,9 +2,7 @@ package com.restaurant.plazoleta.domain.services;
 
 import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.interfaces.*;
-import com.restaurant.plazoleta.domain.model.Category;
-import com.restaurant.plazoleta.domain.model.Dish;
-import com.restaurant.plazoleta.domain.model.Restaurant;
+import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import org.apache.tomcat.util.bcel.Const;
 
@@ -73,6 +71,21 @@ public class DishServiceImpl implements IDishService {
             throw new ExceptionEnableAndDisableDish(ConstantsDomain.ALREADY_ENABLE);
         }
         persistanceDish.setEnableAndDisable(id, Boolean.TRUE);
+    }
+
+    @Override
+    public PaginGeneric<DishResponse> getAllDishAtRestaurant(Integer page, Integer size, String categoryFilter, Integer restId) {
+        if(page<1 || size <1)throw  new ErrorExceptionParam(ConstantsDomain.PAGE_OR_SIZE_ERROR);
+        if(restId == null) throw new ErrorExceptionParam(ConstantsDomain.REST_ID_NOT_NULL);
+        Restaurant restaurant= restaurantService.findById(restId);
+        if(restaurant==null) throw new ExceptionRestaurantNotFound(ConstantsDomain.RESTAURANT_NOT_FOUND+restId);
+        if(categoryFilter == null || categoryFilter.isEmpty()){
+            return persistanceDish.getAllDishAtRestaurant(page, size, restId);
+        }
+        if(!categoriaServices.existsByName(categoryFilter.trim())){
+            throw new ExceptionCategoryNotFound(ConstantsDomain.CATEGORY_NOT_FOUND+categoryFilter);
+        }
+        return persistanceDish.getAllDishWithFilterCategory(page, size, categoryFilter, restId);
     }
 
     private Dish validateDisableAndEnableDish(Integer id){

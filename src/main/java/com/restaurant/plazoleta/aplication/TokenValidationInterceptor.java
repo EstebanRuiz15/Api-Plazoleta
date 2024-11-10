@@ -19,14 +19,17 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Authorization");
 
+        String requestURI = request.getRequestURI();
+
+        if(requestURI.startsWith("/swagger-ui") ||requestURI.startsWith( "/v3/api-docs")) return true;
+
         if (token == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
-        String requestURI = request.getRequestURI();
 
-        if (requestURI.startsWith("/restaurant/") || requestURI.startsWith("/Category/") ) {
+        if (requestURI.equals("/restaurant/") || requestURI.equals("/Category/") ) {
             if (!authServiceClient.validateAdmin()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Unauthorized for this method");
@@ -34,8 +37,8 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if (requestURI.startsWith("/Dish/update/{id}") || requestURI.startsWith("/Dish/")
-                || requestURI.startsWith("/Dish/enable/{id}")||requestURI.startsWith("/Dish/disable/{id}") ) {
+        if (requestURI.startsWith("/Dish/update/") || requestURI.equals("/Dish/")
+                || requestURI.startsWith("/Dish/enable")||requestURI.startsWith("/Dish/disable") ) {
             if (!authServiceClient.validateOWNER()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Unauthorized for this method");
@@ -43,6 +46,12 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
+        if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish")){
+            if (authServiceClient.validateToken()) {
+                return true;
+            }
+        }
+            
         return true;
     }
 }
