@@ -195,4 +195,17 @@ public class ControlAdvice {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ErrorExceptionConflict.class)
+    public ResponseEntity<?> resourceNotFoundException(ErrorExceptionConflict ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put(InfraConstants.ERROR, ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
 }

@@ -269,6 +269,41 @@ class OrderServiceImplTest {
         verify(orderPersistance, times(1)).deliveredOrder(order);
     }
 
+    @Test
+    void testCanceledOrderSuccessfully() {
+        User user = new User();
+        user.setId(1);
+
+        Order order = new Order();
+        order.setId(1);
+        order.setStatus(OrderStatus.PENDING);
+
+        when(userServiceClient.getEmploye()).thenReturn(user);
+        when(orderPersistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING)).thenReturn(order);
+        orderService.canceledOrder();
+
+        verify(orderPersistance, times(1)).canceledOrder(order.getId());
+    }
+
+    @Test
+    void testCanceledOrder_UserNotFound() {
+        when(userServiceClient.getEmploye()).thenReturn(null);
+        ExceptionNotFoundUser exception = assertThrows(ExceptionNotFoundUser.class, () -> orderService.canceledOrder());
+        assertEquals(ConstantsDomain.NOT_FOUND_CLIENT, exception.getMessage());
+    }
+
+    @Test
+    void testCanceledOrder_OrderNotFound() {
+        User user = new User();
+        user.setId(1);
+
+        when(userServiceClient.getEmploye()).thenReturn(user);
+        when(orderPersistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING)).thenReturn(null);
+
+        ErrorExceptionConflict exception = assertThrows(ErrorExceptionConflict.class, () -> orderService.canceledOrder());
+        assertEquals(ConstantsDomain.ORDER_NOT_CANCELLED, exception.getMessage());
+    }
+
 
 
     private Order createOrder() {

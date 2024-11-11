@@ -21,7 +21,8 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
 
         String requestURI = request.getRequestURI();
 
-        if(requestURI.startsWith("/swagger-ui") ||requestURI.startsWith( "/v3/api-docs")) return true;
+        if(requestURI.startsWith("/swagger-ui") ||requestURI.startsWith( "/v3/api-docs")
+                ||requestURI.startsWith( "/restaurant/getRestId")) return true;
 
         if (token == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -44,7 +45,8 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish") || requestURI.equals("/order/")){
+        if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish")
+                || requestURI.equals("/order/") || requestURI.equals("/order/cancelled")){
             if (authServiceClient.validateToken()) {
                 return true;
             }

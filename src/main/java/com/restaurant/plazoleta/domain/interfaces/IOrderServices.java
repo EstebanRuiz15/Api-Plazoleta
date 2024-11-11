@@ -9,6 +9,8 @@ public interface IOrderServices {
     PaginGeneric<OrderResponse> getOrdersAtRestaurant(Integer page, Integer size, String status);
     void assigned_employee_id(Integer orderId);
     void deliveredOrder(String pin);
+    void canceledOrder();
+
 
 
 

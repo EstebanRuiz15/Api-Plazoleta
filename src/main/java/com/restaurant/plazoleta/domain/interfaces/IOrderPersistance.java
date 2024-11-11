@@ -9,5 +9,8 @@ public interface IOrderPersistance {
     Order findById(Integer id);
     void deliveredOrder(Order order);
     Order findBySecurityPin(String pin);
+    void canceledOrder(Integer orderId);
+    Order findByCustomerAndStatus(Integer idCustomer, OrderStatus status);
+
 
 }

@@ -161,9 +161,98 @@ public class OrderController {
         return ResponseEntity.ok(InfraConstants.ASSIGNED_SUCCESFULL);
     }
 
+    @Operation(
+            summary = "Mark an order as delivered",
+            description = "This method allows marking an order as delivered.\n\n It validates the security pin provided by the customer, and changes the order's status to 'DELIVERED', only if the current status is 'READY'.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order successfully marked as delivered",
+                            content = @Content(
+                                    schema = @Schema(type = "string", example = InfraConstants.ORDER_DELIVERED_SUCCES)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error in the provided data",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Invalid or missing security pin.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order not found or invalid security pin",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order not found or invalid pin.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order is already delivered",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order is already delivered.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order is not ready for delivery",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order is not ready for delivery.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Unexpected error occurred while marking the order as delivered.\"}")
+                            )
+                    )
+            }
+    )
     @PatchMapping("/delivered")
     public ResponseEntity<String> deliveredOrder(@RequestParam String securityPin){
         orderServices.deliveredOrder(securityPin);
         return ResponseEntity.ok(InfraConstants.ORDER_DELIVERED_SUCCES);
+    }
+
+    @Operation(
+            summary = "Cancel an order",
+            description = "This method allows the customer to cancel their order.\n\n" +
+                    "The order will only be cancelled if its status is 'PENDING'. Otherwise, a message will indicate that the order is already in process and cannot be cancelled. If the status is 'PENDING', it will be changed to 'CANCELLED'.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order successfully cancelled",
+                            content = @Content(
+                                    schema = @Schema(type = "string", example = InfraConstants.ORDER_CANCELED_SUCCES)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"User not found.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order is not in a cancellable state",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order is not in a cancellable state.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Unexpected error occurred while cancelling the order.\"}")
+                            )
+                    )
+            }
+    )
+    @PatchMapping("/cancelled")
+    public ResponseEntity<String> cancelledOrder(){
+        orderServices.canceledOrder();
+        return ResponseEntity.ok(InfraConstants.ORDER_CANCELED_SUCCES);
     }
 }

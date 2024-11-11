@@ -42,7 +42,7 @@ public final class InfraConstants {
     public static final String REGISTER_ORDER_SUCCES="Register order succes";
     public static final String ASSIGNED_SUCCESFULL= "Assigned employe to order Successfully";
     public static final String ORDER_DELIVERED_SUCCES="Order delivered Successfully";
-
+    public static final String ORDER_CANCELED_SUCCES="Canceled Order Successfully";
 
 
 }

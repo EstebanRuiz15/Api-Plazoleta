@@ -1,9 +1,7 @@
 package com.restaurant.plazoleta.infraestructur.driven_rp.adapter;
 
 import com.restaurant.plazoleta.domain.interfaces.IOrderPersistance;
-import com.restaurant.plazoleta.domain.interfaces.IUserServiceClient;
 import com.restaurant.plazoleta.domain.model.*;
-import com.restaurant.plazoleta.infraestructur.driven_rp.entity.DishEntity;
 import com.restaurant.plazoleta.infraestructur.driven_rp.entity.OrderDishEntity;
 import com.restaurant.plazoleta.infraestructur.driven_rp.entity.OrderEntity;
 import com.restaurant.plazoleta.infraestructur.driven_rp.mapper.IMapperRestaurantToEntity;
@@ -30,7 +28,6 @@ public class OrderPersistanceImpli implements IOrderPersistance {
     private final OrderRepositoryJpa repository;
     private final IMapperRestaurantToEntity restMapper;
     private final OrderDishRepositoryJpa repositoryOrderDish;
-    private final IUserServiceClient feignClient;
 
     @Override
     public void registerOrder(Order order, Restaurant restaurant, String securityPin) {
@@ -84,4 +81,17 @@ public class OrderPersistanceImpli implements IOrderPersistance {
         return order.map(mapperOrder :: toOrder)
                 .orElse(null);
     }
+
+    @Override
+    public void canceledOrder(Integer orderId) {
+        OrderEntity order=repository.findById(orderId.longValue()).get();
+        order.setStatus(OrderStatus.CANCELED);
+        repository.save(order);
+    }
+
+    @Override
+    public Order findByCustomerAndStatus(Integer idCustomer, OrderStatus status) {
+        Optional<OrderEntity> order=repository.findByCustomerAndStatus(idCustomer.longValue(), status);
+        return order.map(mapperOrder :: toOrder)
+                .orElse(null);}
 }

@@ -27,7 +27,7 @@ public class OrderServiceImpl implements IOrderServices {
     @Override
     public void registerOrder(Order order) {
         Restaurant restaurant=restServie.findById(order.getRestaurantId());
-        User client=userFeignClient.GetUser(order.getCustomer());
+        User client=userFeignClient.getEmploye();
         User chef=userFeignClient.getChefAtRestaurant(restaurant.getId());
         if (restaurant== null)throw new ExceptionRestaurantNotFound(ConstantsDomain.RESTAURANT_NOT_FOUND);
         if(client == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
@@ -47,6 +47,8 @@ public class OrderServiceImpl implements IOrderServices {
             }
         }
         order.setOrderDishes(listDish);
+        order.setCustomer(client.getId());
+        order.setChef(chef.getId());
         persistance.registerOrder(order, restaurant, generateSecurityPin());
 
     }
@@ -78,7 +80,8 @@ public class OrderServiceImpl implements IOrderServices {
         Order order=persistance.findById(orderID);
         if(order == null) throw new ExceptionOrderNotFound(ConstantsDomain.ORDER_NOT_FOUND);
         Integer assigned=order.getAssigned_employee_id();
-        if(assigned != null)throw new ErrorExceptionParam(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
+        if(assigned != null)throw new ErrorExceptionConflict(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
+        if(order.getStatus() != OrderStatus.PENDING )throw new ErrorExceptionConflict(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
 
         User employe=userFeignClient.getEmploye();
         Integer employeId=employe.getId();
@@ -90,10 +93,20 @@ public class OrderServiceImpl implements IOrderServices {
         Order order=persistance.findBySecurityPin(pin);
         if(order == null)throw new ExceptionOrderNotFound(ConstantsDomain.ORDER_NOT_FOUND_OR_PIN_ERROR);
         if(order.getStatus() == OrderStatus.DELIVERED)
-            throw new ErrorExceptionParam(ConstantsDomain.ORDER_IS_ALREADY_DELIVERED);
+            throw new ErrorExceptionConflict(ConstantsDomain.ORDER_IS_ALREADY_DELIVERED);
         if(order.getStatus() != OrderStatus.READY)
-           throw new ErrorExceptionParam(ConstantsDomain.ORDER_NOT_REAY);
+           throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_REAY);
         persistance.deliveredOrder(order);
+
+    }
+
+    @Override
+    public void canceledOrder() {
+        User user=userFeignClient.getEmploye();
+        if(user == null)throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
+        Order order=persistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING);
+        if(order == null)throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_CANCELLED);
+        persistance.canceledOrder(order.getId());
 
     }
 

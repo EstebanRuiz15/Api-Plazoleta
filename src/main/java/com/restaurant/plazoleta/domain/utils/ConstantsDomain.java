@@ -28,10 +28,11 @@ public final class ConstantsDomain {
     public static final String ALREADY_RESTAURANT_WITH_OWNER="The owner already one restaurant";
     public static final String INVALID_STATUS_PARAM="Invalid param status";
     public static final String ORDER_NOT_FOUND="Order not found";
-    public static final String ORDER_IS_ALREADY_ASSIGNED="Order is already assigned";
+    public static final String ORDER_IS_ALREADY_ASSIGNED="Order is already assigned or canceled";
     public static final String ORDER_NOT_FOUND_OR_PIN_ERROR="Order not found or wrong pin";
     public static final String ORDER_IS_ALREADY_DELIVERED="Order is already delivered";
     public static final String ORDER_NOT_REAY="the order is not ready yet";
+    public static final String ORDER_NOT_CANCELLED="Sorry, your order is already in preparation and cannot be canceled";
 
 }
 

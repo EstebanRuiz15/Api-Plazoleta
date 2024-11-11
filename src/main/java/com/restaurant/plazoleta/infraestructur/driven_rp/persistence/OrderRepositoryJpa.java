@@ -15,4 +15,6 @@ public interface OrderRepositoryJpa extends JpaRepository<OrderEntity, Long> {
     @Query("SELECT o FROM OrderEntity o WHERE o.restaurant.id = :restaurantId AND o.status = :status")
     Page<OrderEntity> findByRestaurantIdAndStatus(Pageable pageable, @Param("restaurantId") Long restaurantId, @Param("status") OrderStatus status);
     Optional<OrderEntity> findBySecurityPin(String securityPin);
+    Optional<OrderEntity> findByCustomerAndStatus(Long customer, OrderStatus status);
+
 }
