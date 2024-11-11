@@ -38,6 +38,9 @@ public class OrderEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDishEntity> orderDishes;
 
+    @Column()
+    private Long assigned_employee_id;
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     private RestaurantEntity restaurant;

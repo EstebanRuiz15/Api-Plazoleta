@@ -177,4 +177,17 @@ public class ControlAdvice {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ExceptionOrderNotFound.class)
+    public ResponseEntity<?> orderNotFoundException(ExceptionOrderNotFound ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put(InfraConstants.ERROR, ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
 }

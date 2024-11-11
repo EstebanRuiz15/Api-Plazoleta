@@ -27,5 +27,8 @@ public final class ConstantsDomain {
     public static final String NOT_FOUND_CHEF="Not found chef";
     public static final String ALREADY_RESTAURANT_WITH_OWNER="The owner already one restaurant";
     public static final String INVALID_STATUS_PARAM="Invalid param status";
+    public static final String ORDER_NOT_FOUND="Order not found";
+    public static final String ORDER_IS_ALREADY_ASSIGNED="Order is already assigned";
+
 }
 

@@ -11,6 +11,7 @@ public class Order {
     private LocalDateTime date;
     private List<OrderDish> orderDishes;
     private Integer restaurantId;
+    private Integer assigned_employee_id;
 
     public Order() {
     }
@@ -22,6 +23,14 @@ public class Order {
         this.date = date;
         this.orderDishes = orderDishes;
         this.restaurantId = restaurantId;
+    }
+
+    public Integer getAssigned_employee_id() {
+        return assigned_employee_id;
+    }
+
+    public void setAssigned_employee_id(Integer assigned_employee_id) {
+        this.assigned_employee_id = assigned_employee_id;
     }
 
     public Integer getId() {

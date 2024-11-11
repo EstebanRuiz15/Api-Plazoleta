@@ -1,15 +1,10 @@
 package com.restaurant.plazoleta.domain.services;
 
-import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
-import com.restaurant.plazoleta.domain.exception.ExceptionDishNotFound;
-import com.restaurant.plazoleta.domain.exception.ExceptionNotFoundUser;
-import com.restaurant.plazoleta.domain.exception.ExceptionRestaurantNotFound;
+import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.interfaces.*;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
-import com.restaurant.plazoleta.infraestructur.driven_rp.adapter.OrderPersistanceImpli;
 import org.apache.tomcat.util.bcel.Const;
-import org.aspectj.weaver.ast.Or;
 
 import java.util.List;
 import java.util.Set;
@@ -71,6 +66,18 @@ public class OrderServiceImpl implements IOrderServices {
 
 
         return persistance.getOrdersAtRestaurantAnStatus(page,size,restaurant, sta);
+    }
+
+    @Override
+    public void assigned_employee_id(Integer orderID) {
+        Order order=persistance.findById(orderID);
+        if(order == null) throw new ExceptionOrderNotFound(ConstantsDomain.ORDER_NOT_FOUND);
+        Integer assigned=order.getAssigned_employee_id();
+        if(assigned != null)throw new ErrorExceptionParam(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
+
+        User employe=userFeignClient.getEmploye();
+        Integer employeId=employe.getId();
+        persistance.assigned_employee_id(employeId, orderID);
     }
 
     private Boolean listDishIsValid(List<OrderDish> orderDishes,List<Dish> dishes ){

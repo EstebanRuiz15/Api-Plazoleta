@@ -1,6 +1,5 @@
 package com.restaurant.plazoleta.infraestructur.driving_http.dtos.response;
 
-import com.restaurant.plazoleta.domain.model.OrderDish;
 import com.restaurant.plazoleta.domain.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,4 +20,6 @@ public class OrderResponseDto {
     private OrderStatus status;
     private LocalDateTime date;
     private List<OrderDishResponseDto> orderDishes;
+    private Integer assigned_employee_id;
+
 }

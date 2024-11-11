@@ -50,7 +50,7 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if(requestURI.equals("/order/getOrders")){
+        if(requestURI.equals("/order/getOrders") || requestURI.equals("/order/assignedEmploye")){
             if (authServiceClient.validateEmployee()) {
                 return true;
             }
