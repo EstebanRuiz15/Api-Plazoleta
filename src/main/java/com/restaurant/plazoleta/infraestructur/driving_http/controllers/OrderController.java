@@ -1,0 +1,115 @@
+package com.restaurant.plazoleta.infraestructur.driving_http.controllers;
+
+import com.restaurant.plazoleta.domain.exception.ExceptionCategory;
+import com.restaurant.plazoleta.domain.interfaces.IOrderServices;
+import com.restaurant.plazoleta.domain.model.OrderResponse;
+import com.restaurant.plazoleta.domain.model.PaginGeneric;
+import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.OrderRequestDto;
+import com.restaurant.plazoleta.infraestructur.driving_http.dtos.response.OrderResponseDto;
+import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IOrderRequestMapper;
+import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IOrderResponseDtoMapper;
+import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/order")
+public class OrderController {
+    private final IOrderRequestMapper mapperRequest;
+    private final IOrderServices orderServices;
+    private final IOrderResponseDtoMapper orderResponseMapper;
+
+    @Operation(
+            summary = "Register a new order",
+            description = "This endpoint allows clients to place new orders in the restaurant system. " +
+                    "It validates if the customer and chef exist, and if the dishes are available in the specified restaurant.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order successfully registered",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(type = "string", example = InfraConstants.REGISTER_ORDER_SUCCES)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error in the provided data",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"errors\": [\"Field 'customer' must be a number.\", \"Field 'chef' must be a number.\"]}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Customer or Chef or Restaurant or Dish not found",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Customer not found\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Unexpected error occurred while registering the order.\"}")
+                            )
+                    )
+            }
+    )
+    @PostMapping("/")
+    public ResponseEntity<String> registerOrder(@Valid @RequestBody OrderRequestDto request){
+        orderServices.registerOrder(mapperRequest.toOrder(request));
+        return ResponseEntity.ok(InfraConstants.REGISTER_ORDER_SUCCES);
+    }
+
+    @Operation(
+            summary = "Get orders filtered by status",
+            description = "This endpoint lists all orders filtered by status. Only employees can access this endpoint as it lists only the orders related to the restaurant to which the employee belongs.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Orders successfully retrieved",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PaginGeneric.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error in the provided data",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Invalid page or size parameter.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No orders found for the provided status",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"No orders found for the provided status.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Unexpected error occurred while retrieving orders.\"}")
+                            )
+                    )
+            }
+    )
+    @GetMapping("/getOrders")
+    public ResponseEntity<PaginGeneric<OrderResponseDto>> getAllOrderForStatus(
+            @RequestParam (defaultValue = InfraConstants.ONE) Integer page,
+            @RequestParam (defaultValue =InfraConstants.TEN) Integer size,
+            @RequestParam  String statusFilter
+    ) {
+        PaginGeneric<OrderResponse> response=orderServices.getOrdersAtRestaurant(page, size, statusFilter);
+        return ResponseEntity.ok(orderResponseMapper.toPageableResponseDto(response));
+    }
+}

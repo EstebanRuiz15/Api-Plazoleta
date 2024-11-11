@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +42,11 @@ public class RestaurantPersistanceImpl implements IRestaurantPersistance {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("name")));
         Page<RestaurantEntity> restaurantPage = repositoryJpa.findAll(pageable);
         return mapperEntity.toPaginRestaurant(restaurantPage);
+    }
+
+    @Override
+    public List<Restaurant> findByOwner(int ownerId) {
+        return mapperEntity.toListRestaurants(repositoryJpa.findByOwner(ownerId));
     }
 }
 

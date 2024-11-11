@@ -17,12 +17,12 @@ public class User {
 
     private String password;
     private String rol;
+    private Integer rest_id;
 
     public User( ) {
     }
 
-    public User( String name, String lastName, Integer document, String celPhone, Date birthDay, String email, String password, String rol) {
-
+    public User(String name, String lastName, Integer document, String celPhone, Date birthDay, String email, String password, String rol, Integer rest_id) {
         this.name = name;
         this.lastName = lastName;
         this.document = document;
@@ -31,6 +31,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.rol = rol;
+        this.rest_id = rest_id;
     }
 
     public String getName() {
@@ -95,5 +96,13 @@ public class User {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public Integer getRest_id() {
+        return rest_id;
+    }
+
+    public void setRest_id(Integer rest_id) {
+        this.rest_id = rest_id;
     }
 }

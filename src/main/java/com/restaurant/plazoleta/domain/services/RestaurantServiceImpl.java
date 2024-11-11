@@ -10,6 +10,8 @@ import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.domain.model.User;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 
+import java.security.CodeSigner;
+
 public class RestaurantServiceImpl implements IRestaurantService {
     private final IRestaurantPersistance persistance;
     private final IUserServiceClient userClient;
@@ -30,6 +32,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
             throw new ErrorExceptionUserInvalid(ConstantsDomain.ERROR_USER
                     +user.getName()+ConstantsDomain.NOT_HAVE_OWNER_ROL);
         }
+        if(!persistance.findByOwner(request.getOwner()).isEmpty() || persistance.findByOwner(request.getOwner()) != null)
+            throw new ErrorExceptionParam(ConstantsDomain.ALREADY_RESTAURANT_WITH_OWNER);
 
         persistance.saveRestaurant(request, user);
     }

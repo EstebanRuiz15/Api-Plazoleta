@@ -22,4 +22,13 @@ public class UserFeignServeImpl implements IUserServiceClient {
             throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
         }
     }
+
+    @Override
+    public User getEmploye() {
+        try {
+            return userClient.getEmploye();
+        } catch (FeignException e) {
+            throw new ErrorFeignException((ConstantsDomain.COMUNICATION_ERROR_WITH_SERVICE)+e);
+        }
+    }
 }

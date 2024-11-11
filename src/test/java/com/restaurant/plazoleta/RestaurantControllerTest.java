@@ -8,6 +8,7 @@ import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.infraestructur.driving_http.controllers.RestaurantController;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.RestaurantRequestDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IRestauratRequestMapper;
+import com.restaurant.plazoleta.infraestructur.driving_http.mappers.RestaurantToDtoMapper;
 import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,8 @@ class RestaurantControllerTest {
     private IValidateAutorizeFeign authServiceClient;
     @MockBean
     private TokenValidationInterceptor tokenValidationInterceptor;
+    @MockBean
+    private RestaurantToDtoMapper responseMapper;
 
     private RestaurantRequestDto validRequest;
     private Restaurant mappedRestaurant;
