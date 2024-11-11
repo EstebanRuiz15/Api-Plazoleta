@@ -21,5 +21,6 @@ public class OrderResponseDto {
     private LocalDateTime date;
     private List<OrderDishResponseDto> orderDishes;
     private Integer assigned_employee_id;
+    private String securityPin;
 
 }

@@ -63,7 +63,7 @@ public class OrderController {
             }
     )
     @PostMapping("/")
-    public ResponseEntity<String> registerOrder(@Valid @RequestBody OrderRequestDto request){
+    public ResponseEntity<String> registerOrder(@RequestBody @Valid OrderRequestDto request){
         orderServices.registerOrder(mapperRequest.toOrder(request));
         return ResponseEntity.ok(InfraConstants.REGISTER_ORDER_SUCCES);
     }
@@ -159,5 +159,11 @@ public class OrderController {
     public ResponseEntity<String> assignatedEmployeToOrder(@RequestParam Integer idOrder){
         orderServices.assigned_employee_id(idOrder);
         return ResponseEntity.ok(InfraConstants.ASSIGNED_SUCCESFULL);
+    }
+
+    @PatchMapping("/delivered")
+    public ResponseEntity<String> deliveredOrder(@RequestParam String securityPin){
+        orderServices.deliveredOrder(securityPin);
+        return ResponseEntity.ok(InfraConstants.ORDER_DELIVERED_SUCCES);
     }
 }

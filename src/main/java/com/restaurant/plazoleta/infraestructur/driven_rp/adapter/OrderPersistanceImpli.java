@@ -33,7 +33,7 @@ public class OrderPersistanceImpli implements IOrderPersistance {
     private final IUserServiceClient feignClient;
 
     @Override
-    public void registerOrder(Order order, Restaurant restaurant) {
+    public void registerOrder(Order order, Restaurant restaurant, String securityPin) {
         List<OrderDishEntity> orderDish = mapperOrderDish.toListEntity(order.getOrderDishes());
         OrderEntity orderEntity = mapperOrder.toEntity(order);
         orderEntity.setRestaurant(restMapper.toEntity(restaurant));
@@ -45,6 +45,7 @@ public class OrderPersistanceImpli implements IOrderPersistance {
             orderDishEntity.setOrder(orderEntity);
 
         }
+        orderEntity.setSecurityPin(securityPin);
         repositoryOrderDish.saveAll(orderDish);
     }
 
@@ -66,6 +67,20 @@ public class OrderPersistanceImpli implements IOrderPersistance {
     @Override
     public Order findById(Integer id) {
         Optional<OrderEntity> order=repository.findById(id.longValue());
+        return order.map(mapperOrder :: toOrder)
+                .orElse(null);
+    }
+
+    @Override
+    public void deliveredOrder(Order order) {
+        OrderEntity entity = repository.findById(order.getId().longValue()).get();
+        entity.setStatus(OrderStatus.DELIVERED);
+        repository.save(entity);
+    }
+
+    @Override
+    public Order findBySecurityPin(String pin) {
+        Optional<OrderEntity> order=repository.findBySecurityPin(pin);
         return order.map(mapperOrder :: toOrder)
                 .orElse(null);
     }

@@ -41,6 +41,11 @@ public class ControlAdvice {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(ErrorExceptionParam.class)
     public ResponseEntity<?> resourceNotFoundException(ErrorExceptionParam ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
