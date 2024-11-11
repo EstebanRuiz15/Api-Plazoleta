@@ -28,7 +28,7 @@ public class OrderServiceImpl implements IOrderServices {
     public void registerOrder(Order order) {
         Restaurant restaurant=restServie.findById(order.getRestaurantId());
         User client=userFeignClient.GetUser(order.getCustomer());
-        User chef=userFeignClient.GetUser(order.getChef());
+        User chef=userFeignClient.getChefAtRestaurant(restaurant.getId());
         if (restaurant== null)throw new ExceptionRestaurantNotFound(ConstantsDomain.RESTAURANT_NOT_FOUND);
         if(client == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
         if(chef == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CHEF);

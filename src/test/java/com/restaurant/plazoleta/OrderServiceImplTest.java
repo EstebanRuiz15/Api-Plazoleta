@@ -8,7 +8,6 @@ import com.restaurant.plazoleta.domain.interfaces.IUserServiceClient;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.services.OrderServiceImpl;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
-import com.restaurant.plazoleta.infraestructur.driven_rp.adapter.UserFeignServeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

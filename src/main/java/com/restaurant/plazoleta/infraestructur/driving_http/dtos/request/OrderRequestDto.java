@@ -2,7 +2,6 @@ package com.restaurant.plazoleta.infraestructur.driving_http.dtos.request;
 
 import com.restaurant.plazoleta.infraestructur.util.InfraConstants;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,12 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDto {
-    @NotNull(message = InfraConstants.NOT_NULL_FIELDS)
-    @Positive( message =InfraConstants.ONLY_NUMBER_MESSAGE )
-    private Integer  customer;
-    @Positive( message =InfraConstants.ONLY_NUMBER_MESSAGE )
-    @NotNull(message = InfraConstants.NOT_NULL_FIELDS)
-    private Integer  chef;
     @Positive( message =InfraConstants.ONLY_NUMBER_MESSAGE )
     @NotNull(message = InfraConstants.NOT_NULL_FIELDS)
     private Integer restaurantId;
