@@ -115,7 +115,11 @@ public class RestaurantController {
         return ResponseEntity.ok(
                 responseMapper.toPaginRestaurant(resta)
         );
+    }
 
+    @GetMapping("getRestId")
+    public ResponseEntity<Integer> getRestaurantOwnerId(@RequestParam Integer idOwner){
+    return ResponseEntity.ok(restaurantService.getRestaurantOwnerId(idOwner));
     }
 
 }

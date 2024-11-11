@@ -45,8 +45,10 @@ public class RestaurantPersistanceImpl implements IRestaurantPersistance {
     }
 
     @Override
-    public List<Restaurant> findByOwner(int ownerId) {
-        return mapperEntity.toListRestaurants(repositoryJpa.findByOwner(ownerId));
+    public Restaurant findByOwner(int ownerId) {
+        Optional<RestaurantEntity> restaurant=repositoryJpa.findById(ownerId);
+        return restaurant.map(mapperEntity :: toRestaurant)
+                .orElse(null);
     }
 }
 
