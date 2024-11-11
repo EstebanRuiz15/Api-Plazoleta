@@ -30,19 +30,17 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
 
 
         if (requestURI.equals("/restaurant/") || requestURI.equals("/Category/") ) {
-            if (!authServiceClient.validateAdmin()) {
+            if (authServiceClient.validateAdmin()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("Unauthorized for this method");
-                return false;
+                return true;
             }
         }
 
         if (requestURI.startsWith("/Dish/update/") || requestURI.equals("/Dish/")
                 || requestURI.startsWith("/Dish/enable")||requestURI.startsWith("/Dish/disable") ) {
-            if (!authServiceClient.validateOWNER()) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Unauthorized for this method");
-                return false;
+            if (authServiceClient.validateOWNER()) {
+                return true;
             }
         }
 
@@ -51,7 +49,14 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
                 return true;
             }
         }
-            
-        return true;
+
+        if(requestURI.equals("/order/getOrders")){
+            if (authServiceClient.validateEmployee()) {
+                return true;
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getWriter().write("Unauthorized for this method");
+        return false;
     }
 }

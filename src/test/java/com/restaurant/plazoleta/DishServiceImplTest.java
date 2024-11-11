@@ -248,7 +248,7 @@ class DishServiceImplTest {
         int rest=1;
         PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
         when(persistanceDish.getAllDishAtRestaurant(page, size,rest)).thenReturn(expectedResponse);
-
+        when(restaurantService.findById(rest)).thenReturn(restaurant);
         PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, null,rest);
 
         assertEquals(expectedResponse, result);
@@ -265,6 +265,7 @@ class DishServiceImplTest {
 
         String category = "Italian";
         PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
+        when(restaurantService.findById(rest)).thenReturn(restaurant);
 
         when(categoriaServices.existsByName(category.trim())).thenReturn(true);
         when(persistanceDish.getAllDishWithFilterCategory(page, size, category, rest))
@@ -320,6 +321,7 @@ class DishServiceImplTest {
         String category = "NonExistentCategory";
 
         when(categoriaServices.existsByName(category.trim())).thenReturn(false);
+        when(restaurantService.findById(rest)).thenReturn(restaurant);
 
         assertThrows(ExceptionCategoryNotFound.class, () ->
                         dishService.getAllDishAtRestaurant(page, size, category,rest),
@@ -341,7 +343,7 @@ class DishServiceImplTest {
         PaginGeneric<DishResponse> expectedResponse = new PaginGeneric<>();
 
         when(persistanceDish.getAllDishAtRestaurant(page, size,rest)).thenReturn(expectedResponse);
-
+        when(restaurantService.findById(rest)).thenReturn(restaurant);
         PaginGeneric<DishResponse> result = dishService.getAllDishAtRestaurant(page, size, category,rest);
 
         assertEquals(expectedResponse, result);

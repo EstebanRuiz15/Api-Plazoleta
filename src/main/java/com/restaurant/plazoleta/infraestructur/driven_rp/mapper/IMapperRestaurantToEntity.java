@@ -7,12 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface IMapperRestaurantToEntity {
 
     @Mapping(target = "owner", ignore = true)
     RestaurantEntity toEntity (Restaurant restaurant);
     Restaurant toRestaurant (RestaurantEntity restaurant);
+    List<Restaurant> toListRestaurants (List<RestaurantEntity> restaurants);
     @Mapping(source = "content", target = "items")
     @Mapping(source = "number", target = "currentPage")
     @Mapping(source = "size", target = "size")

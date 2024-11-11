@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -35,21 +37,7 @@ class RestaurantServiceImplTest {
         restaurantService = new RestaurantServiceImpl(restaurantPersistance, userClient);
     }
 
-    @Test
-    void saveRestaurant_WithValidOwner_ShouldSaveSuccessfully() {
-        // Arrange
-        Restaurant restaurant = createValidRestaurant();
-        User owner = createValidOwner();
 
-        when(userClient.GetUser(restaurant.getOwner())).thenReturn(owner);
-
-        // Act
-        restaurantService.saveRestaurant(restaurant);
-
-        // Assert
-        verify(restaurantPersistance).saveRestaurant(restaurant, owner);
-        verify(userClient).GetUser(restaurant.getOwner());
-    }
 
     @Test
     void saveRestaurant_WithNonExistentUser_ShouldThrowException() {

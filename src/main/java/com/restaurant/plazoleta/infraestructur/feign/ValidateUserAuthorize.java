@@ -16,7 +16,7 @@ public interface ValidateUserAuthorize {
     @GetMapping("auth/validate/client")
     Boolean validateCient();
 
-    @GetMapping("auth/validate/employe")
+    @GetMapping("auth/validate/employee")
     Boolean validateEmployee();
 
     @GetMapping("auth/validateToken")
