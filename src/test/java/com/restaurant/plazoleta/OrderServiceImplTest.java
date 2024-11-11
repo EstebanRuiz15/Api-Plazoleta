@@ -1,9 +1,6 @@
 package com.restaurant.plazoleta;
 
-import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
-import com.restaurant.plazoleta.domain.exception.ExceptionDishNotFound;
-import com.restaurant.plazoleta.domain.exception.ExceptionNotFoundUser;
-import com.restaurant.plazoleta.domain.exception.ExceptionRestaurantNotFound;
+import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.interfaces.IDishService;
 import com.restaurant.plazoleta.domain.interfaces.IOrderPersistance;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
@@ -171,6 +168,56 @@ class OrderServiceImplTest {
 
         assertEquals(ConstantsDomain.PAGE_OR_SIZE_ERROR, exception.getMessage());
     }
+
+    @Test
+    void assigned_employee_id_Success() {
+
+        Integer orderId = 1;
+        Order order = new Order();
+        order.setId(orderId);
+        order.setAssigned_employee_id(null);
+
+        User employee = new User();
+        employee.setId(100);
+
+        when(orderPersistance.findById(orderId)).thenReturn(order);
+        when(userServiceClient.getEmploye()).thenReturn(employee);
+
+        orderService.assigned_employee_id(orderId);
+
+        verify(orderPersistance).assigned_employee_id(employee.getId(), orderId);
+    }
+
+    @Test
+    void assigned_employee_id_OrderNotFound() {
+
+        Integer orderId = 1;
+        when(orderPersistance.findById(orderId)).thenReturn(null);
+
+        ExceptionOrderNotFound exception = assertThrows(ExceptionOrderNotFound.class, () -> {
+            orderService.assigned_employee_id(orderId);
+        });
+
+        assertEquals(ConstantsDomain.ORDER_NOT_FOUND, exception.getMessage());
+    }
+
+    @Test
+    void assigned_employee_id_OrderAlreadyAssigned() {
+
+        Integer orderId = 1;
+        Order order = new Order();
+        order.setId(orderId);
+        order.setAssigned_employee_id(100);
+
+        when(orderPersistance.findById(orderId)).thenReturn(order);
+
+        ErrorExceptionParam exception = assertThrows(ErrorExceptionParam.class, () -> {
+            orderService.assigned_employee_id(orderId);
+        });
+
+        assertEquals(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED, exception.getMessage());
+    }
+
 
 
     private Order createOrder() {

@@ -40,6 +40,7 @@ public final class InfraConstants {
     public static final String ONLY_BUMBERS_REGEX="^[0-9]+$";
     public static final String ONLY_NUMBER_MESSAGE="The field must contain only numbers";
     public static final String REGISTER_ORDER_SUCCES="Register order succes";
+    public static final String ASSIGNED_SUCCESFULL= "Assigned employe to order Successfully";
 
 
 

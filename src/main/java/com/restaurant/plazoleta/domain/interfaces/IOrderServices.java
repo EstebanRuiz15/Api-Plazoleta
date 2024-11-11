@@ -7,5 +7,7 @@ import com.restaurant.plazoleta.domain.model.PaginGeneric;
 public interface IOrderServices {
     void registerOrder(Order order);
     PaginGeneric<OrderResponse> getOrdersAtRestaurant(Integer page, Integer size, String status);
+    void assigned_employee_id(Integer orderId);
+
 
 }

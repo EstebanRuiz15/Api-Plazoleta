@@ -10,6 +10,7 @@ public class OrderResponse {
     private OrderStatus status;
     private LocalDateTime date;
     private List<OrderDish> orderDishes;
+    private Integer assigned_employee_id;
 
     public OrderResponse(Integer id, String customer, String chef, OrderStatus status, LocalDateTime date, List<OrderDish> orderDishes) {
         this.id = id;
@@ -21,6 +22,14 @@ public class OrderResponse {
     }
 
     public OrderResponse() {
+    }
+
+    public Integer getAssigned_employee_id() {
+        return assigned_employee_id;
+    }
+
+    public void setAssigned_employee_id(Integer assigned_employee_id) {
+        this.assigned_employee_id = assigned_employee_id;
     }
 
     public Integer getId() {

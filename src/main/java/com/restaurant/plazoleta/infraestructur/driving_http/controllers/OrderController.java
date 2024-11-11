@@ -112,4 +112,52 @@ public class OrderController {
         PaginGeneric<OrderResponse> response=orderServices.getOrdersAtRestaurant(page, size, statusFilter);
         return ResponseEntity.ok(orderResponseMapper.toPageableResponseDto(response));
     }
+
+    @Operation(
+            summary = "Assign an employee to an order",
+            description = "This endpoint assigns an employee to an order. The employee making the request is assigned to the order, and the order status is changed to 'In Preparation'.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Employee successfully assigned to the order",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(type = "string", example = InfraConstants.ASSIGNED_SUCCESFULL)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation error in the provided data",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order ID must be a positive integer.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Order not found",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order not found.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Order is already assigned to an employee",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Order is already assigned to an employee.\"}")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(type = "object", example = "{\"error\": \"Unexpected error occurred while assigning the employee to the order.\"}")
+                            )
+                    )
+            }
+    )
+    @PatchMapping("/assignedEmploye")
+    public ResponseEntity<String> assignatedEmployeToOrder(@RequestParam Integer idOrder){
+        orderServices.assigned_employee_id(idOrder);
+        return ResponseEntity.ok(InfraConstants.ASSIGNED_SUCCESFULL);
+    }
 }
