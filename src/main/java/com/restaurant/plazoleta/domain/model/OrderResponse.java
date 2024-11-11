@@ -11,6 +11,7 @@ public class OrderResponse {
     private LocalDateTime date;
     private List<OrderDish> orderDishes;
     private Integer assigned_employee_id;
+    private String securityPin;
 
     public OrderResponse(Integer id, String customer, String chef, OrderStatus status, LocalDateTime date, List<OrderDish> orderDishes) {
         this.id = id;
@@ -22,6 +23,14 @@ public class OrderResponse {
     }
 
     public OrderResponse() {
+    }
+
+    public String getSecurityPin() {
+        return securityPin;
+    }
+
+    public void setSecurityPin(String securityPin) {
+        this.securityPin = securityPin;
     }
 
     public Integer getAssigned_employee_id() {

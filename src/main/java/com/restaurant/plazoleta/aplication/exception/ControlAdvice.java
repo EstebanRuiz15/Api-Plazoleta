@@ -41,6 +41,11 @@ public class ControlAdvice {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(ErrorExceptionParam.class)
     public ResponseEntity<?> resourceNotFoundException(ErrorExceptionParam ex, WebRequest request) {
         Map<String, String> details = new HashMap<>();
@@ -188,6 +193,19 @@ public class ControlAdvice {
                 details
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ErrorExceptionConflict.class)
+    public ResponseEntity<?> resourceNotFoundException(ErrorExceptionConflict ex, WebRequest request) {
+        Map<String, String> details = new HashMap<>();
+        details.put(InfraConstants.ERROR, ex.getMessage());
+
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                details
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
 }

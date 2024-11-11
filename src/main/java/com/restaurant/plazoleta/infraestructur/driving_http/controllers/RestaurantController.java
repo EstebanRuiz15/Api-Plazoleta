@@ -4,7 +4,6 @@ import com.restaurant.plazoleta.domain.exception.ErrorExceptionParam;
 import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
 import com.restaurant.plazoleta.domain.model.PaginGeneric;
 import com.restaurant.plazoleta.domain.model.Restaurant;
-import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.request.RestaurantRequestDto;
 import com.restaurant.plazoleta.infraestructur.driving_http.dtos.response.AllRestaurantsResponse;
 import com.restaurant.plazoleta.infraestructur.driving_http.mappers.IRestauratRequestMapper;
@@ -117,7 +116,7 @@ public class RestaurantController {
         );
     }
 
-    @GetMapping("getRestId")
+    @GetMapping("/getRestId")
     public ResponseEntity<Integer> getRestaurantOwnerId(@RequestParam Integer idOwner){
     return ResponseEntity.ok(restaurantService.getRestaurantOwnerId(idOwner));
     }

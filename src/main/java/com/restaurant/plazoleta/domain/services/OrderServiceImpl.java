@@ -7,6 +7,7 @@ import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import org.apache.tomcat.util.bcel.Const;
 
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,8 +27,8 @@ public class OrderServiceImpl implements IOrderServices {
     @Override
     public void registerOrder(Order order) {
         Restaurant restaurant=restServie.findById(order.getRestaurantId());
-        User client=userFeignClient.GetUser(order.getCustomer());
-        User chef=userFeignClient.GetUser(order.getChef());
+        User client=userFeignClient.getEmploye();
+        User chef=userFeignClient.getChefAtRestaurant(restaurant.getId());
         if (restaurant== null)throw new ExceptionRestaurantNotFound(ConstantsDomain.RESTAURANT_NOT_FOUND);
         if(client == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
         if(chef == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CHEF);
@@ -46,7 +47,9 @@ public class OrderServiceImpl implements IOrderServices {
             }
         }
         order.setOrderDishes(listDish);
-        persistance.registerOrder(order, restaurant);
+        order.setCustomer(client.getId());
+        order.setChef(chef.getId());
+        persistance.registerOrder(order, restaurant, generateSecurityPin());
 
     }
 
@@ -54,7 +57,8 @@ public class OrderServiceImpl implements IOrderServices {
     public PaginGeneric<OrderResponse> getOrdersAtRestaurant(Integer page, Integer size, String status) {
         if(page<1 || size <1)throw  new ErrorExceptionParam(ConstantsDomain.PAGE_OR_SIZE_ERROR);
         if(!status.equalsIgnoreCase(OrderStatus.PENDING.toString()) && !status.equalsIgnoreCase
-                        (OrderStatus.READY.toString()) && !status.equalsIgnoreCase(OrderStatus.IN_PREPARATION.toString())) {
+                        (OrderStatus.READY.toString()) && !status.equalsIgnoreCase(OrderStatus.IN_PREPARATION.toString())
+                && !status.equalsIgnoreCase(OrderStatus.DELIVERED.toString())&& !status.equalsIgnoreCase(OrderStatus.CANCELED.toString())) {
         throw new ErrorExceptionParam(ConstantsDomain.INVALID_STATUS_PARAM);
         }
 
@@ -63,6 +67,9 @@ public class OrderServiceImpl implements IOrderServices {
         OrderStatus sta=OrderStatus.PENDING;
         if(status.equals(OrderStatus.IN_PREPARATION.toString()))sta=OrderStatus.IN_PREPARATION;
         if(status.equals(OrderStatus.READY.toString()))sta=OrderStatus.READY;
+        if(status.equals(OrderStatus.DELIVERED.toString()))sta=OrderStatus.DELIVERED;
+        if(status.equals(OrderStatus.CANCELED.toString()))sta=OrderStatus.CANCELED;
+
 
 
         return persistance.getOrdersAtRestaurantAnStatus(page,size,restaurant, sta);
@@ -73,11 +80,34 @@ public class OrderServiceImpl implements IOrderServices {
         Order order=persistance.findById(orderID);
         if(order == null) throw new ExceptionOrderNotFound(ConstantsDomain.ORDER_NOT_FOUND);
         Integer assigned=order.getAssigned_employee_id();
-        if(assigned != null)throw new ErrorExceptionParam(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
+        if(assigned != null)throw new ErrorExceptionConflict(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
+        if(order.getStatus() != OrderStatus.PENDING )throw new ErrorExceptionConflict(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED);
 
         User employe=userFeignClient.getEmploye();
         Integer employeId=employe.getId();
         persistance.assigned_employee_id(employeId, orderID);
+    }
+
+    @Override
+    public void deliveredOrder(String pin) {
+        Order order=persistance.findBySecurityPin(pin);
+        if(order == null)throw new ExceptionOrderNotFound(ConstantsDomain.ORDER_NOT_FOUND_OR_PIN_ERROR);
+        if(order.getStatus() == OrderStatus.DELIVERED)
+            throw new ErrorExceptionConflict(ConstantsDomain.ORDER_IS_ALREADY_DELIVERED);
+        if(order.getStatus() != OrderStatus.READY)
+           throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_REAY);
+        persistance.deliveredOrder(order);
+
+    }
+
+    @Override
+    public void canceledOrder() {
+        User user=userFeignClient.getEmploye();
+        if(user == null)throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
+        Order order=persistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING);
+        if(order == null)throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_CANCELLED);
+        persistance.canceledOrder(order.getId());
+
     }
 
     private Boolean listDishIsValid(List<OrderDish> orderDishes,List<Dish> dishes ){
@@ -97,5 +127,8 @@ public class OrderServiceImpl implements IOrderServices {
             throw new ExceptionDishNotFound(ConstantsDomain.SOME_DISHES_NOT_FOUND);
         }
         return true;
+    }
+    private String generateSecurityPin() {
+        return String.format("%04d", new Random().nextInt(10000));
     }
 }

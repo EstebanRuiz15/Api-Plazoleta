@@ -12,6 +12,7 @@ public class Order {
     private List<OrderDish> orderDishes;
     private Integer restaurantId;
     private Integer assigned_employee_id;
+    private String securityPin;
 
     public Order() {
     }
@@ -23,6 +24,14 @@ public class Order {
         this.date = date;
         this.orderDishes = orderDishes;
         this.restaurantId = restaurantId;
+    }
+
+    public String getSecurityPin() {
+        return securityPin;
+    }
+
+    public void setSecurityPin(String securityPin) {
+        this.securityPin = securityPin;
     }
 
     public Integer getAssigned_employee_id() {

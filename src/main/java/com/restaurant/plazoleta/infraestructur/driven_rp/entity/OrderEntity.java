@@ -1,5 +1,6 @@
 package com.restaurant.plazoleta.infraestructur.driven_rp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restaurant.plazoleta.domain.model.OrderStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -40,6 +41,10 @@ public class OrderEntity {
 
     @Column()
     private Long assigned_employee_id;
+
+    @JsonIgnore
+    @Column
+    private String securityPin;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)

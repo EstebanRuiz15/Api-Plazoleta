@@ -8,7 +8,6 @@ import com.restaurant.plazoleta.domain.interfaces.IUserServiceClient;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.services.OrderServiceImpl;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
-import com.restaurant.plazoleta.infraestructur.driven_rp.adapter.UserFeignServeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +42,7 @@ class OrderServiceImplTest {
         User customer = createUser("Customer");
         User chef = createUser("Chef");
         List<Dish> dishes = createDishes();
+        String pin="12322";
 
         when(restaurantService.findById(order.getRestaurantId())).thenReturn(restaurant);
         when(userServiceClient.GetUser(order.getCustomer())).thenReturn(customer);
@@ -51,7 +51,7 @@ class OrderServiceImplTest {
 
         assertDoesNotThrow(() -> orderService.registerOrder(order));
 
-        verify(orderPersistance, times(1)).registerOrder(order, restaurant);
+        verify(orderPersistance, times(1)).registerOrder(order, restaurant, pin);
     }
 
     @Test
@@ -216,6 +216,92 @@ class OrderServiceImplTest {
         });
 
         assertEquals(ConstantsDomain.ORDER_IS_ALREADY_ASSIGNED, exception.getMessage());
+    }
+    @Test
+    void testDeliveredOrder_OrderNotFound() {
+
+        String pin = "1234";
+        when(orderPersistance.findBySecurityPin(pin)).thenReturn(null);
+
+        ExceptionOrderNotFound exception = assertThrows(ExceptionOrderNotFound.class, () -> {
+            orderService.deliveredOrder(pin);
+        });
+
+        assertEquals("Order not found or wrong pin", exception.getMessage());
+    }
+
+    @Test
+    void testDeliveredOrder_OrderAlreadyDelivered() {
+        String pin = "1234";
+        Order order = new Order();
+        order.setStatus(OrderStatus.DELIVERED);
+        when(orderPersistance.findBySecurityPin(pin)).thenReturn(order);
+
+        ErrorExceptionParam exception = assertThrows(ErrorExceptionParam.class, () -> {
+            orderService.deliveredOrder(pin);
+        });
+
+        assertEquals("Order is already delivered", exception.getMessage());
+    }
+
+    @Test
+    void testDeliveredOrder_OrderNotReady() {
+        String pin = "1234";
+        Order order = new Order();
+        order.setStatus(OrderStatus.PENDING);
+        when(orderPersistance.findBySecurityPin(pin)).thenReturn(order);
+        ErrorExceptionParam exception = assertThrows(ErrorExceptionParam.class, () -> {
+            orderService.deliveredOrder(pin);
+        });
+
+        assertEquals("the order is not ready yet", exception.getMessage());
+    }
+
+    @Test
+    void testDeliveredOrder_SuccessfulDelivery() {
+        String pin = "1234";
+        Order order = new Order();
+        order.setStatus(OrderStatus.READY);
+        when(orderPersistance.findBySecurityPin(pin)).thenReturn(order);
+
+        orderService.deliveredOrder(pin);
+
+        verify(orderPersistance, times(1)).deliveredOrder(order);
+    }
+
+    @Test
+    void testCanceledOrderSuccessfully() {
+        User user = new User();
+        user.setId(1);
+
+        Order order = new Order();
+        order.setId(1);
+        order.setStatus(OrderStatus.PENDING);
+
+        when(userServiceClient.getEmploye()).thenReturn(user);
+        when(orderPersistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING)).thenReturn(order);
+        orderService.canceledOrder();
+
+        verify(orderPersistance, times(1)).canceledOrder(order.getId());
+    }
+
+    @Test
+    void testCanceledOrder_UserNotFound() {
+        when(userServiceClient.getEmploye()).thenReturn(null);
+        ExceptionNotFoundUser exception = assertThrows(ExceptionNotFoundUser.class, () -> orderService.canceledOrder());
+        assertEquals(ConstantsDomain.NOT_FOUND_CLIENT, exception.getMessage());
+    }
+
+    @Test
+    void testCanceledOrder_OrderNotFound() {
+        User user = new User();
+        user.setId(1);
+
+        when(userServiceClient.getEmploye()).thenReturn(user);
+        when(orderPersistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING)).thenReturn(null);
+
+        ErrorExceptionConflict exception = assertThrows(ErrorExceptionConflict.class, () -> orderService.canceledOrder());
+        assertEquals(ConstantsDomain.ORDER_NOT_CANCELLED, exception.getMessage());
     }
 
 
