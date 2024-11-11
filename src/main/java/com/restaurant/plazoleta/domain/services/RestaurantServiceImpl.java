@@ -32,7 +32,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
             throw new ErrorExceptionUserInvalid(ConstantsDomain.ERROR_USER
                     +user.getName()+ConstantsDomain.NOT_HAVE_OWNER_ROL);
         }
-        if(!persistance.findByOwner(request.getOwner()).isEmpty() || persistance.findByOwner(request.getOwner()) != null)
+        if(persistance.findByOwner(request.getOwner()) != null)
             throw new ErrorExceptionParam(ConstantsDomain.ALREADY_RESTAURANT_WITH_OWNER);
 
         persistance.saveRestaurant(request, user);
@@ -47,5 +47,10 @@ public class RestaurantServiceImpl implements IRestaurantService {
     @Override
     public Restaurant findById(Integer id) {
         return persistance.findById(id);
+    }
+
+    @Override
+    public Integer getRestaurantOwnerId(Integer idOwner) {
+     return persistance.findByOwner(idOwner).getOwner();
     }
 }

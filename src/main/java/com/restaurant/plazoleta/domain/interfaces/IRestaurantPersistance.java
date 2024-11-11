@@ -10,7 +10,7 @@ public interface  IRestaurantPersistance {
    void saveRestaurant(Restaurant restaurant, User user);
    Restaurant findById(Integer id);
    PaginGeneric<Restaurant> getAllRestaurants(Integer page, Integer size);
-   List<Restaurant> findByOwner(int ownerId);
+   Restaurant findByOwner(int ownerId);
 
 
 }
