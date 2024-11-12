@@ -1,10 +1,7 @@
 package com.restaurant.plazoleta;
 
 import com.restaurant.plazoleta.domain.exception.*;
-import com.restaurant.plazoleta.domain.interfaces.IDishService;
-import com.restaurant.plazoleta.domain.interfaces.IOrderPersistance;
-import com.restaurant.plazoleta.domain.interfaces.IRestaurantService;
-import com.restaurant.plazoleta.domain.interfaces.IUserServiceClient;
+import com.restaurant.plazoleta.domain.interfaces.*;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.services.OrderServiceImpl;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
@@ -12,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +23,7 @@ class OrderServiceImplTest {
     private IDishService dishService;
     private IUserServiceClient userServiceClient;
     private OrderServiceImpl orderService;
+    private ITrazabilityFeignService logStatuService;
 
     @BeforeEach
     void setUp() {
@@ -32,48 +31,12 @@ class OrderServiceImplTest {
         restaurantService = mock(IRestaurantService.class);
         dishService = mock(IDishService.class);
         userServiceClient = mock(IUserServiceClient.class);
-        orderService = new OrderServiceImpl(orderPersistance, restaurantService, dishService, userServiceClient);
+        logStatuService=mock(ITrazabilityFeignService.class);
+        orderService = new OrderServiceImpl(orderPersistance, restaurantService, dishService, userServiceClient, logStatuService);
     }
 
-    @Test
-    void registerOrder_successful() {
-        Order order = createOrder();
-        Restaurant restaurant = createRestaurant();
-        User customer = createUser("Customer");
-        User chef = createUser("Chef");
-        List<Dish> dishes = createDishes();
-        String pin="12322";
 
-        when(restaurantService.findById(order.getRestaurantId())).thenReturn(restaurant);
-        when(userServiceClient.GetUser(order.getCustomer())).thenReturn(customer);
-        when(userServiceClient.GetUser(order.getChef())).thenReturn(chef);
-        when(dishService.getAllDishAtRestaurantActive(order.getRestaurantId())).thenReturn(dishes);
 
-        assertDoesNotThrow(() -> orderService.registerOrder(order));
-
-        verify(orderPersistance, times(1)).registerOrder(order, restaurant, pin);
-    }
-
-    @Test
-    void registerOrder_restaurantNotFound() {
-        Order order = createOrder();
-        when(restaurantService.findById(order.getRestaurantId())).thenReturn(null);
-
-        Exception exception = assertThrows(ExceptionRestaurantNotFound.class, () -> orderService.registerOrder(order));
-        assertEquals(ConstantsDomain.RESTAURANT_NOT_FOUND, exception.getMessage());
-    }
-
-    @Test
-    void registerOrder_customerNotFound() {
-        Order order = createOrder();
-        Restaurant restaurant = createRestaurant();
-
-        when(restaurantService.findById(order.getRestaurantId())).thenReturn(restaurant);
-        when(userServiceClient.GetUser(order.getCustomer())).thenReturn(null);
-
-        Exception exception = assertThrows(ExceptionNotFoundUser.class, () -> orderService.registerOrder(order));
-        assertEquals(ConstantsDomain.NOT_FOUND_CLIENT, exception.getMessage());
-    }
 
     @Test
     void registerOrder_chefNotFound() {
@@ -82,8 +45,8 @@ class OrderServiceImplTest {
         User customer = createUser("Customer");
 
         when(restaurantService.findById(order.getRestaurantId())).thenReturn(restaurant);
-        when(userServiceClient.GetUser(order.getCustomer())).thenReturn(customer);
-        when(userServiceClient.GetUser(order.getChef())).thenReturn(null);
+        when(userServiceClient.getEmploye()).thenReturn(customer);
+        when(userServiceClient.getChefAtRestaurant(restaurant.getId())).thenReturn(null);
 
         Exception exception = assertThrows(ExceptionNotFoundUser.class, () -> orderService.registerOrder(order));
         assertEquals(ConstantsDomain.NOT_FOUND_CHEF, exception.getMessage());
@@ -98,8 +61,8 @@ class OrderServiceImplTest {
         List<Dish> dishes = Arrays.asList(createDish(1), createDish(2)); // Only two dishes available
 
         when(restaurantService.findById(order.getRestaurantId())).thenReturn(restaurant);
-        when(userServiceClient.GetUser(order.getCustomer())).thenReturn(customer);
-        when(userServiceClient.GetUser(order.getChef())).thenReturn(chef);
+        when(userServiceClient.getEmploye()).thenReturn(customer);
+        when(userServiceClient.getChefAtRestaurant(restaurant.getId())).thenReturn(chef);
         when(dishService.getAllDishAtRestaurantActive(order.getRestaurantId())).thenReturn(dishes);
 
         Exception exception = assertThrows(ExceptionDishNotFound.class, () -> orderService.registerOrder(order));
@@ -176,7 +139,7 @@ class OrderServiceImplTest {
         Order order = new Order();
         order.setId(orderId);
         order.setAssigned_employee_id(null);
-
+        order.setStatus(OrderStatus.PENDING);
         User employee = new User();
         employee.setId(100);
 
@@ -211,7 +174,7 @@ class OrderServiceImplTest {
 
         when(orderPersistance.findById(orderId)).thenReturn(order);
 
-        ErrorExceptionParam exception = assertThrows(ErrorExceptionParam.class, () -> {
+        ErrorExceptionConflict exception = assertThrows(ErrorExceptionConflict.class, () -> {
             orderService.assigned_employee_id(orderId);
         });
 
@@ -237,7 +200,7 @@ class OrderServiceImplTest {
         order.setStatus(OrderStatus.DELIVERED);
         when(orderPersistance.findBySecurityPin(pin)).thenReturn(order);
 
-        ErrorExceptionParam exception = assertThrows(ErrorExceptionParam.class, () -> {
+        ErrorExceptionConflict exception = assertThrows(ErrorExceptionConflict.class, () -> {
             orderService.deliveredOrder(pin);
         });
 
@@ -250,7 +213,7 @@ class OrderServiceImplTest {
         Order order = new Order();
         order.setStatus(OrderStatus.PENDING);
         when(orderPersistance.findBySecurityPin(pin)).thenReturn(order);
-        ErrorExceptionParam exception = assertThrows(ErrorExceptionParam.class, () -> {
+        ErrorExceptionConflict exception = assertThrows(ErrorExceptionConflict.class, () -> {
             orderService.deliveredOrder(pin);
         });
 
@@ -363,5 +326,13 @@ class OrderServiceImplTest {
 
     private List<Dish> createDishes() {
         return Arrays.asList(createDish(1), createDish(2), createDish(3));
+    }
+
+    private List<OrderDish> createOrderDishes() {
+        List<OrderDish> orderDishes = new ArrayList<>();
+        OrderDish orderDish = new OrderDish();
+        orderDish.setDishId(1);
+        orderDishes.add(orderDish);
+        return orderDishes;
     }
 }

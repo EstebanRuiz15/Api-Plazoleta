@@ -33,6 +33,7 @@ public final class ConstantsDomain {
     public static final String ORDER_IS_ALREADY_DELIVERED="Order is already delivered";
     public static final String ORDER_NOT_REAY="the order is not ready yet";
     public static final String ORDER_NOT_CANCELLED="Sorry, your order is already in preparation and cannot be canceled";
+    public static final String NOW_ALREADY_PENDING_ORDER="At this moment you already have a pending order";
 
 }
 

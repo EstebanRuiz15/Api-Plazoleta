@@ -32,8 +32,6 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
 
         if (requestURI.equals("/restaurant/") || requestURI.equals("/Category/") ) {
             if (authServiceClient.validateAdmin()) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Unauthorized for this method");
                 return true;
             }
         }
@@ -46,7 +44,7 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
         }
 
         if(requestURI.equals("/restaurant/getRestaurants") || requestURI.equals("/Dish/getAllDish")
-                || requestURI.equals("/order/") || requestURI.equals("/order/cancelled")){
+                || requestURI.equals("/order/") || requestURI.equals("/order/cancelled") || requestURI.equals("/LogStatus/status")){
             if (authServiceClient.validateToken()) {
                 return true;
             }

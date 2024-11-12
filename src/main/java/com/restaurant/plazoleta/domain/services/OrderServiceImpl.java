@@ -4,7 +4,6 @@ import com.restaurant.plazoleta.domain.exception.*;
 import com.restaurant.plazoleta.domain.interfaces.*;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
-import org.apache.tomcat.util.bcel.Const;
 
 import java.util.List;
 import java.util.Random;
@@ -16,12 +15,14 @@ public class OrderServiceImpl implements IOrderServices {
     private final IRestaurantService restServie;
     private final IDishService dishService;
     private final IUserServiceClient userFeignClient;
+    private final ITrazabilityFeignService logStatuService;
 
-    public OrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie, IDishService dishService, IUserServiceClient userFeignClient) {
+    public OrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie, IDishService dishService, IUserServiceClient userFeignClient, ITrazabilityFeignService logStatuService) {
         this.persistance = persistance;
         this.restServie = restServie;
         this.dishService = dishService;
         this.userFeignClient = userFeignClient;
+        this.logStatuService = logStatuService;
     }
 
     @Override
@@ -29,9 +30,15 @@ public class OrderServiceImpl implements IOrderServices {
         Restaurant restaurant=restServie.findById(order.getRestaurantId());
         User client=userFeignClient.getEmploye();
         User chef=userFeignClient.getChefAtRestaurant(restaurant.getId());
-        if (restaurant== null)throw new ExceptionRestaurantNotFound(ConstantsDomain.RESTAURANT_NOT_FOUND);
-        if(client == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
-        if(chef == null) throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CHEF);
+        Order existOrderPending=persistance.findByCustomerAndStatus(client.getId(), OrderStatus.PENDING);
+        if(existOrderPending != null)
+            throw new ErrorExceptionConflict(ConstantsDomain.NOW_ALREADY_PENDING_ORDER);
+        if (restaurant == null)
+            throw new ExceptionRestaurantNotFound(ConstantsDomain.RESTAURANT_NOT_FOUND);
+        if(client == null)
+            throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CLIENT);
+        if(chef == null)
+            throw new ExceptionNotFoundUser(ConstantsDomain.NOT_FOUND_CHEF);
 
         List<OrderDish> listDish=order.getOrderDishes();
         List<Dish> listDishAtRestaurant=dishService.getAllDishAtRestaurantActive(restaurant.getId());
@@ -49,8 +56,7 @@ public class OrderServiceImpl implements IOrderServices {
         order.setOrderDishes(listDish);
         order.setCustomer(client.getId());
         order.setChef(chef.getId());
-        persistance.registerOrder(order, restaurant, generateSecurityPin());
-
+        persistance.registerOrder(order, restaurant, generateSecurityPin(), client.getEmail());
     }
 
     @Override
@@ -86,6 +92,7 @@ public class OrderServiceImpl implements IOrderServices {
         User employe=userFeignClient.getEmploye();
         Integer employeId=employe.getId();
         persistance.assigned_employee_id(employeId, orderID);
+        logStatuService.registerTrazabilityChangeStatus(OrderStatus.IN_PREPARATION,orderID, employe.getEmail(), employe.getId());
     }
 
     @Override
@@ -97,6 +104,7 @@ public class OrderServiceImpl implements IOrderServices {
         if(order.getStatus() != OrderStatus.READY)
            throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_REAY);
         persistance.deliveredOrder(order);
+        logStatuService.registerTrazabilityChangeStatus(OrderStatus.DELIVERED,order.getId(),null,null);
 
     }
 
@@ -107,6 +115,7 @@ public class OrderServiceImpl implements IOrderServices {
         Order order=persistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING);
         if(order == null)throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_CANCELLED);
         persistance.canceledOrder(order.getId());
+        logStatuService.registerTrazabilityChangeStatus(OrderStatus.CANCELED,order.getId(),null,null);
 
     }
 
