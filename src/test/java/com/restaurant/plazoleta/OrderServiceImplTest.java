@@ -8,7 +8,6 @@ import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ class OrderServiceImplTest {
     private IDishService dishService;
     private IUserServiceClient userServiceClient;
     private OrderServiceImpl orderService;
-    private ILogStatusService logStatuService;
+    private ITrazabilityFeignService logStatuService;
 
     @BeforeEach
     void setUp() {
@@ -32,7 +31,7 @@ class OrderServiceImplTest {
         restaurantService = mock(IRestaurantService.class);
         dishService = mock(IDishService.class);
         userServiceClient = mock(IUserServiceClient.class);
-        logStatuService=mock(ILogStatusService.class);
+        logStatuService=mock(ITrazabilityFeignService.class);
         orderService = new OrderServiceImpl(orderPersistance, restaurantService, dishService, userServiceClient, logStatuService);
     }
 

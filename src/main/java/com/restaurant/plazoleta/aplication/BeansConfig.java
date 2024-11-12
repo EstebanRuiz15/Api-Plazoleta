@@ -40,7 +40,7 @@ public class BeansConfig {
 
     @Bean
     public OrderServiceImpl getOrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie,
-                                                IDishService dishService, IUserServiceClient userFeignClient,ILogStatusService logStatuService) {
+                                                IDishService dishService, IUserServiceClient userFeignClient,ITrazabilityFeignService logStatuService) {
         return new OrderServiceImpl(persistance, restServie, dishService, userFeignClient, logStatuService);
     }
     }

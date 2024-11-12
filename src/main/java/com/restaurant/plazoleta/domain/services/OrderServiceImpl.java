@@ -15,9 +15,9 @@ public class OrderServiceImpl implements IOrderServices {
     private final IRestaurantService restServie;
     private final IDishService dishService;
     private final IUserServiceClient userFeignClient;
-    private final ILogStatusService logStatuService;
+    private final ITrazabilityFeignService logStatuService;
 
-    public OrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie, IDishService dishService, IUserServiceClient userFeignClient, ILogStatusService logStatuService) {
+    public OrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie, IDishService dishService, IUserServiceClient userFeignClient, ITrazabilityFeignService logStatuService) {
         this.persistance = persistance;
         this.restServie = restServie;
         this.dishService = dishService;
@@ -92,7 +92,7 @@ public class OrderServiceImpl implements IOrderServices {
         User employe=userFeignClient.getEmploye();
         Integer employeId=employe.getId();
         persistance.assigned_employee_id(employeId, orderID);
-        logStatuService.registerChange(OrderStatus.IN_PREPARATION,orderID, employe.getEmail(), employe.getId());
+        logStatuService.registerTrazabilityChangeStatus(OrderStatus.IN_PREPARATION,orderID, employe.getEmail(), employe.getId());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class OrderServiceImpl implements IOrderServices {
         if(order.getStatus() != OrderStatus.READY)
            throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_REAY);
         persistance.deliveredOrder(order);
-        logStatuService.registerChange(OrderStatus.DELIVERED,order.getId(),null,null);
+        logStatuService.registerTrazabilityChangeStatus(OrderStatus.DELIVERED,order.getId(),null,null);
 
     }
 
@@ -115,7 +115,7 @@ public class OrderServiceImpl implements IOrderServices {
         Order order=persistance.findByCustomerAndStatus(user.getId(), OrderStatus.PENDING);
         if(order == null)throw new ErrorExceptionConflict(ConstantsDomain.ORDER_NOT_CANCELLED);
         persistance.canceledOrder(order.getId());
-        logStatuService.registerChange(OrderStatus.CANCELED,order.getId(),null,null);
+        logStatuService.registerTrazabilityChangeStatus(OrderStatus.CANCELED,order.getId(),null,null);
 
     }
 
