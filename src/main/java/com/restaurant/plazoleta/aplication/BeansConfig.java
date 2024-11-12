@@ -39,7 +39,8 @@ public class BeansConfig {
 
 
     @Bean
-    public OrderServiceImpl getOrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie, IDishService dishService, IUserServiceClient userFeignClient) {
-        return new OrderServiceImpl(persistance, restServie, dishService, userFeignClient);
+    public OrderServiceImpl getOrderServiceImpl(IOrderPersistance persistance, IRestaurantService restServie,
+                                                IDishService dishService, IUserServiceClient userFeignClient,ILogStatusService logStatuService) {
+        return new OrderServiceImpl(persistance, restServie, dishService, userFeignClient, logStatuService);
     }
     }

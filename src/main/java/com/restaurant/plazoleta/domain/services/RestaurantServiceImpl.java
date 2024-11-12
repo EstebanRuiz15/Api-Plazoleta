@@ -10,8 +10,6 @@ import com.restaurant.plazoleta.domain.model.Restaurant;
 import com.restaurant.plazoleta.domain.model.User;
 import com.restaurant.plazoleta.domain.utils.ConstantsDomain;
 
-import java.security.CodeSigner;
-
 public class RestaurantServiceImpl implements IRestaurantService {
     private final IRestaurantPersistance persistance;
     private final IUserServiceClient userClient;

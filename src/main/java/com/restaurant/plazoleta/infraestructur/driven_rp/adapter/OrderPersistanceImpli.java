@@ -1,5 +1,6 @@
 package com.restaurant.plazoleta.infraestructur.driven_rp.adapter;
 
+import com.restaurant.plazoleta.domain.interfaces.ILogStatusService;
 import com.restaurant.plazoleta.domain.interfaces.IOrderPersistance;
 import com.restaurant.plazoleta.domain.model.*;
 import com.restaurant.plazoleta.infraestructur.driven_rp.entity.OrderDishEntity;
@@ -28,9 +29,10 @@ public class OrderPersistanceImpli implements IOrderPersistance {
     private final OrderRepositoryJpa repository;
     private final IMapperRestaurantToEntity restMapper;
     private final OrderDishRepositoryJpa repositoryOrderDish;
+    private final ILogStatusService logServer;
 
     @Override
-    public void registerOrder(Order order, Restaurant restaurant, String securityPin) {
+    public void registerOrder(Order order, Restaurant restaurant, String securityPin, String clientEmail) {
         List<OrderDishEntity> orderDish = mapperOrderDish.toListEntity(order.getOrderDishes());
         OrderEntity orderEntity = mapperOrder.toEntity(order);
         orderEntity.setRestaurant(restMapper.toEntity(restaurant));
@@ -44,6 +46,7 @@ public class OrderPersistanceImpli implements IOrderPersistance {
         }
         orderEntity.setSecurityPin(securityPin);
         repositoryOrderDish.saveAll(orderDish);
+        logServer.registerStar(mapperOrder.toOrder(orderEntity), clientEmail);
     }
 
     @Override
